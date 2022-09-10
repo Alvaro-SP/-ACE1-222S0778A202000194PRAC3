@@ -7,7 +7,7 @@ SET /P NOMBRE=WRITE COMMIT:
 git add .
 git commit -m "%NOMBRE%"
 git push
-git push https://Alvaro-SP:QONUnDpelSsf4gjaakj4YP904QVM9MsCdA3NBHRFAes@github.com/Alvaro-SP/-ACE1-222S0778A202000194PRAC3.git
+git push https://Alvaro-SP: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@github.com/Alvaro-SP/-ACE1-222S0778A202000194PRAC3.git
 pause
 
 
