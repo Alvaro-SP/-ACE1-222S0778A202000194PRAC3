@@ -17,7 +17,12 @@ tb6             DB   27,'ALVARO EMMANUEL SOCOP PEREZ'
 tb7             DB   9,'202000194'
 pressenter      DB   24,'ENTER: Para continuar...'
 
-;--------------------------  MIS_DATOS -----------------------------
+;--------------------------     MENU    -----------------------------
+tm1             DB   29,'------- MENU PRINCIPAL ------'
+tm2             DB   16,'1. Iniciar Juego'
+tm3             DB   15,'2. Cargar Juego'
+tm4             DB   8,'3. Salir'
+
 ;--------------------------  MIS_DATOS -----------------------------
 ;--------------------------  MIS_DATOS -----------------------------
 ;--------------------------  MIS_DATOS -----------------------------
@@ -45,7 +50,7 @@ ATTACKY_STRING        DB  1,?
 ;                ░█▀▄▀█ ─█▀▀█ ░█▀▀█ ░█▀▀█ ░█▀▀▀█ ░█▀▀▀█ 
 ;                ░█░█░█ ░█▄▄█ ░█─── ░█▄▄▀ ░█──░█ ─▀▀▀▄▄ 
 ;                ░█──░█ ░█─░█ ░█▄▄█ ░█─░█ ░█▄▄▄█ ░█▄▄▄█
-print MACRO MYMESSAGE , LOCATION,COLOR
+print MACRO MYMESSAGE , LOCATION,COLOR                            ; ▬▬▬▬▬ IMPRIMIR
 	PUSHA
 	MOV DX,LOCATION
 	MOV BP, OFFSET MYMESSAGE
@@ -54,12 +59,26 @@ print MACRO MYMESSAGE , LOCATION,COLOR
 	POPA
 ENDM print
 
-misdatos MACRO
+misdatos MACRO                                                     ; ▬▬▬▬▬ DATOS
 	PUSHA
 	CALL misdatos_
 	POPA
 ENDM misdatos
 
+limpiar MACRO                                                     ; ▬▬▬▬▬ LIMPIAR
+	PUSHA
+    mov ah, 00h
+    mov ah, 03h
+    int 10h
+	POPA
+ENDM limpiar
+esperaenter MACRO                                                  ; ▬▬▬▬▬ ENTER
+	PUSHA
+    mov ax, 00
+    mov ah, 01h
+    int 21h
+	POPA
+ENDM esperaenter
 
 ; ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬      █▀▄▀█ ▄▀█ █ █▄░█       ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 ; ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬      █░▀░█ █▀█ █ █░▀█       ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
@@ -68,7 +87,8 @@ main PROC FAR
     MOV DS, AX
     MOV ES, AX
     misdatos
-
+    esperaenter
+    limpiar
     HLT ; para decirle al CPU que se estara ejecutando varias veces (detiene CPU hasta sig interrupcion)
     RET
 main    ENDP
@@ -89,7 +109,7 @@ misdatos_     PROC NEAR
     print tb5 , 1610H , 0FF0FH
     print tb6 , 1810H , 0FF0FH
     print tb7 , 1A10H , 0FF0FH
-    print pressenter , 2125H , 0FF0FH
+    print pressenter , 2125H , 0FF30H
     RET
 misdatos_     ENDP
 
