@@ -29,29 +29,10 @@ tm3c             DB   '         2. Cargar Juego',10, 13, "$"
 tm4c             DB   '         3. Salir',10, 13, "$"
 ;*--------------------------  COLORES -----------------------------
 BLACK               EQU  00H
-BLUE                EQU  01H
-GREEN               EQU  02H
-CYAN                EQU  03H
-RED                 EQU  04H
-MAGENTA             EQU  05H
-BROWN               EQU  06H
-LIGHT_GRAY          EQU  07H
-DARK_GRAY           EQU  08H
-LIGHT_BLUE          EQU  09H
-LIGHT_GREEN         EQU  0AH
-LIGHT_CYAN          EQU  0BH
-LIGHT_RED           EQU  0CH
-LIGHT_MAGENTA       EQU  0DH
-YELLOW              EQU  0EH
-WHITE               EQU  0FH
 
 ;*---------------- COORDENADAS ----------
 POSX            DB  ?
 POSY            DB  ?
-PIXELS1_X          DW  ?
-PIXELS2_X          DW  ?
-PIXELS1_Y          DW  ?
-PIXELS2_Y          DW  ?
 
 ;*--------------------------  PARAMETROS DIBUJAR -----------------------------
 X1              DW  ?
@@ -59,19 +40,36 @@ X2              DW  ?
 Y1              DW  ?
 Y2              DW  ?
 ;*--------------------------  DRAWING THE TABLES -----------------------------
-square          DB "[",254,"]  ", "$";██
-shoot           DB "X", 10, "$"
-dshoot          DB "O", 10, 13, "$"
-;square          DB "Ingrese su nombre: ", 10, 13, "$"
+ship          DB "[",254,"] ", "$";██
+shoot          DB "[X] ", "$"
+dshoot          DB "[O] ", "$"
+noship          DB "[ ] ", "$"
 saltolinea      DB " ",10, 13, "$"
 
 ;* --------------------------  JUGADOR -----------------------------
 iniciaunotext db "---EL JUGADOR 1 INICIA LA PARTIDA---", 10, 13, "$"
 iniciadostext db "---EL JUGADOR 2 INICIA LA PARTIDA---", 10, 13, "$"
+jugandojugador2 db "JUGANDO: JUGADOR 2", 10, 13, "$"
+jugandojugador1 db "JUGANDO: JUGADOR 2", 10, 13, "$"
+titledisparos db "DISPAROS", "$"
+titlebarcos db "BARCOS", "$"
+titleingresebarcos db "INGRESO DE BARCOS", "$"
+titlebarcosdisponibles db "*** BARCOS DISPONIBLES ***", "$"
+titleseleccionebarco db "Seleccione barco a posicionar", "$"
+
+;*BARCOS
+textoBoteneumatico         db "1. Bote Neumatico", "$"
+textoDestructoramericano    db "2. Destructor Americano", "$"
+textoDestructorjapones      db "3. Destructor Japones", "$"
+textoAcorazado              db "4. Acorazado", "$"
+textoPortaviones            db "5. Portaviones", "$"
+limpiarbarcos               db "                     ","$"
+decorotexto1                db 219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,"$"
+dt2                         db 219,"$"
 borrarlinea     DB "                                        ",13
 ;* --------------------------  MATRICES DE LOS JUGADORES -----------------------------
-matriz1 DB 100 dup(0)
-matriz2 DB 100 dup(0)
+matriz1 DB 10 dup(0)
+matriz2 DB 10 dup(0)
 
 ;* --------------------------  MIS_DATOS -----------------------------
 ;* --------------------------  MIS_DATOS -----------------------------
@@ -206,8 +204,12 @@ KEY_PRESSED                     DB  ?
         CALL poscursor_
         ; POPA
     ENDM poscursor
-;! ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬      █▀▄▀█ ▄▀█ █ █▄░█       ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-;! ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬      █░▀░█ █▀█ █ █░▀█       ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+
+    decorobarra MACRO
+        decorobarra_
+    ENDM decorobarra
+;! ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬      █▀▄▀█ ▄▀█ █ █▄░█       ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+;! ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬      █░▀░█ █▀█ █ █░▀█       ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 main PROC FAR
     MOV AX, @DATA
     MOV DS, AX
@@ -220,14 +222,13 @@ main PROC FAR
     limpiar  ;* limpio la pantalla
     poscursor 6,22
     print tm1c
-    poscursor 9,22
-    ;poscursor 8,22
+    poscursor 8,22
     print tm2c
-    ;poscursor 10,22
+    poscursor 10,22
     print tm3c
-    ;poscursor 12,22
+    poscursor 12,22
     print tm4c
-    ;poscursor 16,29
+    poscursor 16,29
     readtext
     OPCIONDEMENU
     mov ax, 4c00h
@@ -343,7 +344,7 @@ painttablero_ PROC NEAR
         je imprimirsaltolinea
 
     printelcuadro:
-        print square
+        print noship
         INC si
         JMP paintfila
 
@@ -358,7 +359,9 @@ painttablero_ PROC NEAR
     RET
 painttablero_ ENDP
 
-
+decorobarra_ PROC NEAR
+    
+decorobarra_ ENDP
 
 
 ;?☻ ===================== OPCIONES DEL MENU ======================= ☻
@@ -380,6 +383,17 @@ OPCIONDEMENU_ PROC NEAR
     RET
 OPCIONDEMENU_ ENDP
 
+;?☻ ===================== POSICIONAR EL CURSOR ======================= ☻
+poscursor_ PROC NEAR
+    ; FUNCION COLOCAR CURSOR
+
+    mov ah, 02h ; FUNCION PARA COLOCAR EL CURSOR
+    mov dh, POSX ; 12 FILA
+    mov dl, POSY ; 12 COLUMNA
+    INT 10h
+    RET
+poscursor_ ENDP
+
 ;?☻ =====================INICIO DEL JUEGO ================== ===== ☻
 INICIODEJUEGOM_ PROC NEAR
     limpiar
@@ -396,13 +410,50 @@ INICIODEJUEGOM_ PROC NEAR
             int 21h
 
         CMP dl, '1'
-        JNE INICIAELJUGADORDOS ; sino es 1 se va a JUGADOR 2
+        JNE INICIAELJUGADORUNO ; sino es 1 se va a JUGADOR 2
         JE INICIAELJUGADORUNO ; SI SI ES se va a JUGADOR 1
     INICIAELJUGADORUNO:
+        poscursor 10, 20  ;* MUESTRO TEXTO INICIO
         print iniciaunotext
+        readtext
+        limpiar
+        poscursor 0,0
+        print jugandojugador1
+        poscursor 0, 33
+        print titledisparos
+        poscursor 11, 33
+        print titlebarcos
+
+        poscursor 12, 0
+        painttablero
+
+        poscursor 1, 49
+        print titlebarcosdisponibles
+        poscursor 13,44
+        print titleseleccionebarco
+        ;* texto decoracion
+        poscursor 0,43
+        print decorotexto1
+        poscursor 10,43
+        print decorotexto1
+        poscursor 24,43
+        print decorotexto1
+        decorobarra
+        ;* imprimo barcos disponibles
+        poscursor 3,50
+        print textoBoteneumatico
+        poscursor 12, 49
+        print titleingresebarcos
+
+        
+
+        readtext
+
 
     INICIAELJUGADORDOS:
+        poscursor 10, 20
         print iniciadostext
+        readtext
 
     RET
 INICIODEJUEGOM_ ENDP
@@ -412,16 +463,7 @@ CARGADEJUEGOM_ PROC NEAR
     RET
 CARGADEJUEGOM_ ENDP
 
-;?☻ ===================== POSICIONAR EL CURSOR ======================= ☻
-poscursor_ PROC NEAR
-    ; FUNCION COLOCAR CURSOR
 
-    mov ah, 02h ; FUNCION PARA COLOCAR EL CURSOR
-    mov dh, POSX ; 12 FILA
-    mov dl, POSY ; 12 COLUMNA
-    INT 10h
-    RET
-poscursor_ ENDP
 
 end     MAIN
 
