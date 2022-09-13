@@ -1,13 +1,13 @@
 
-;     █░█░█ █▀▀ █░░ █▀▀ █▀█ █▀▄▀█ █▀▀   █▀▄▀█ █▄█   █▀▀ ▄▀█ █▀▄▀█ █▀▀
-;     ▀▄▀▄▀ ██▄ █▄▄ █▄▄ █▄█ █░▀░█ ██▄   █░▀░█ ░█░   █▄█ █▀█ █░▀░█ ██▄
-; ---------------------------------------------------------------------------------------------------
+;todo     █░█░█ █▀▀ █░░ █▀▀ █▀█ █▀▄▀█ █▀▀   █▀▄▀█ █▄█   █▀▀ ▄▀█ █▀▄▀█ █▀▀
+;todo     ▀▄▀▄▀ ██▄ █▄▄ █▄▄ █▄█ █░▀░█ ██▄   █░▀░█ ░█░   █▄█ █▀█ █░▀░█ ██▄
+;todo ---------------------------------------------------------------------------------------------------
 .MODEL LARGE
 .386
 .STACK 64
 .DATA
 
-;--------------------------  MIS_DATOS -----------------------------
+;*--------------------------  MIS_DATOS -----------------------------
 tb1             DB   38,'BIENVENIDO AL JUEGO BATTLESHIPS !!!!!!'
 tb2             DB   38,'Universidad de San Carlos de Guatemala'
 tb3             DB   22,'Facultad de Ingenieria'
@@ -17,17 +17,17 @@ tb6             DB   27,'ALVARO EMMANUEL SOCOP PEREZ'
 tb7             DB   9,'202000194'
 pressenter      DB   24,'ENTER: Para continuar...'
 
-;--------------------------     MENU    -----------------------------
+;*--------------------------     MENU    -----------------------------
 tm1             DB   29,'------- MENU PRINCIPAL ------'
 tm2             DB   16,'1. Iniciar Juego'
 tm3             DB   15,'2. Cargar Juego'
 tm4             DB   8,'3. Salir'
 keypress          DB ?, "$"
 tm1c             DB   '------- MENU PRINCIPAL ------',10, 13, "$"
-tm2c             DB   '1. Iniciar Juego',10, 13, "$"
-tm3c             DB   '2. Cargar Juego',10, 13, "$"
-tm4c             DB   '3. Salir',10, 13, "$"
-;--------------------------  COLORES -----------------------------
+tm2c             DB   '         1. Iniciar Juego',10, 13, "$"
+tm3c             DB   '         2. Cargar Juego',10, 13, "$"
+tm4c             DB   '         3. Salir',10, 13, "$"
+;*--------------------------  COLORES -----------------------------
 BLACK               EQU  00H
 BLUE                EQU  01H
 GREEN               EQU  02H
@@ -45,48 +45,50 @@ LIGHT_MAGENTA       EQU  0DH
 YELLOW              EQU  0EH
 WHITE               EQU  0FH
 
-;---------------- COORDENADAS ----------
-GRID1_X            DW  ?
-GRID2_X            DW  ?
-GRID1_Y            DW  ?
-GRID2_Y            DW  ?
+;*---------------- COORDENADAS ----------
+POSX            DB  ?
+POSY            DB  ?
 PIXELS1_X          DW  ?
 PIXELS2_X          DW  ?
 PIXELS1_Y          DW  ?
 PIXELS2_Y          DW  ?
 
-;--------------------------  PARAMETROS DIBUJAR -----------------------------
+;*--------------------------  PARAMETROS DIBUJAR -----------------------------
 X1              DW  ?
 X2              DW  ?
 Y1              DW  ?
 Y2              DW  ?
-;--------------------------  DRAWING THE TABLES -----------------------------
-square          DB "[",219,"]  ", "$";██
+;*--------------------------  DRAWING THE TABLES -----------------------------
+square          DB "[",254,"]  ", "$";██
 shoot           DB "X", 10, "$"
 dshoot          DB "O", 10, 13, "$"
 ;square          DB "Ingrese su nombre: ", 10, 13, "$"
 saltolinea      DB " ",10, 13, "$"
 
-;--------------------------  JUGADOR -----------------------------
+;* --------------------------  JUGADOR -----------------------------
 iniciaunotext db "---EL JUGADOR 1 INICIA LA PARTIDA---", 10, 13, "$"
+iniciadostext db "---EL JUGADOR 2 INICIA LA PARTIDA---", 10, 13, "$"
 borrarlinea     DB "                                        ",13
-;--------------------------  MIS_DATOS -----------------------------
-;--------------------------  MIS_DATOS -----------------------------
-;--------------------------  MIS_DATOS -----------------------------
-;--------------------------  MIS_DATOS -----------------------------
-;--------------------------  MIS_DATOS -----------------------------
-;--------------------------  MIS_DATOS -----------------------------
-;--------------------------  MIS_DATOS -----------------------------
+;* --------------------------  MATRICES DE LOS JUGADORES -----------------------------
+matriz1 DB 100 dup(0)
+matriz2 DB 100 dup(0)
+
+;* --------------------------  MIS_DATOS -----------------------------
+;* --------------------------  MIS_DATOS -----------------------------
+;* --------------------------  MIS_DATOS -----------------------------
+;* --------------------------  MIS_DATOS -----------------------------
+;* --------------------------  MIS_DATOS -----------------------------
+;* --------------------------  MIS_DATOS -----------------------------
 temp DW  ?
 KEY_PRESSED                     DB  ?
 
 
-;████████████████████████████ SEGMENTO DE CODIGO ████████████████████████████
+;!████████████████████████████ SEGMENTO DE CODIGO ████████████████████████████
 .CODE
-;                ░█▀▄▀█ ─█▀▀█ ░█▀▀█ ░█▀▀█ ░█▀▀▀█ ░█▀▀▀█ 
-;                ░█░█░█ ░█▄▄█ ░█─── ░█▄▄▀ ░█──░█ ─▀▀▀▄▄ 
-;                ░█──░█ ░█─░█ ░█▄▄█ ░█─░█ ░█▄▄▄█ ░█▄▄▄█
-    PAINTTEXT MACRO MYMESSAGE , LOCATION,COLOR                            ; ▬▬▬▬▬ IMPRIMIR
+;!                ░█▀▄▀█ ─█▀▀█ ░█▀▀█ ░█▀▀█ ░█▀▀▀█ ░█▀▀▀█ 
+;!                ░█░█░█ ░█▄▄█ ░█─── ░█▄▄▀ ░█──░█ ─▀▀▀▄▄ 
+;!                ░█──░█ ░█─░█ ░█▄▄█ ░█─░█ ░█▄▄▄█ ░█▄▄▄█
+    PAINTTEXT MACRO MYMESSAGE , LOCATION,COLOR                            ;? ▬▬▬▬▬ IMPRIMIR
         PUSHA
         MOV DX,LOCATION
         MOV BP, OFFSET MYMESSAGE
@@ -95,20 +97,20 @@ KEY_PRESSED                     DB  ?
         POPA
     ENDM PAINTTEXT
 
-    misdatos MACRO                                                     ; ▬▬▬▬▬ DATOS
+    misdatos MACRO                                                     ;? ▬▬▬▬▬ DATOS
         PUSHA
         CALL misdatos_
         POPA
     ENDM misdatos
 
-    ;========================= VIDEO ===================================
+    ;*========================= VIDEO ===================================
     esperatecla MACRO
         PUSHA
         CALL esperatecla_
         POPA
     ENDM  esperatecla
 
-    paint	MACRO	CORNER1X, CORNER1Y, CORNER2X, CORNER2Y, COLOR ; ▬▬▬▬▬ MENU DIBUJAR EN PANTALLA 
+    paint	MACRO	CORNER1X, CORNER1Y, CORNER2X, CORNER2Y, COLOR ;? ▬▬▬▬▬ MENU DIBUJAR EN PANTALLA 
         PUSHA
         PUSH AX
         MOV AX, CORNER1X
@@ -124,7 +126,7 @@ KEY_PRESSED                     DB  ?
         CALL paint_
         POPA
     ENDM	paint
-    esperaenter MACRO                                                  ; ▬▬▬▬▬ ENTER
+    esperaenter MACRO                                                  ;? ▬▬▬▬▬ ENTER
         PUSHA
         mov ax, 00
         mov ah, 01h
@@ -132,27 +134,27 @@ KEY_PRESSED                     DB  ?
         POPA
     ENDM esperaenter
 
-    enterclick MACRO                                                  ; ▬▬▬ ENTER
+    enterclick MACRO                                                  ;? ▬▬▬ ENTER
         PUSHA
         CALL enterclick_
         POPA
     ENDM enterclick
 
-    ;========================= MENU PRINCIPAL ===================================
-    menu MACRO                                                     ; ▬▬▬▬▬ MENU
+    ;*========================= MENU PRINCIPAL ===================================
+    menu MACRO                                                     ;? ▬▬▬▬▬ MENU
         PUSHA
         CALL menu_
         POPA
     ENDM menu
 
-    ;========================= CONSOLA ===================================
-    limpiar MACRO                                                     ; ▬▬▬▬▬ LIMPIAR
+    ;* ========================= CONSOLA ===================================
+    limpiar MACRO                                                     ;? ▬▬▬▬▬ LIMPIAR
         mov ah, 00h
         mov al, 03h
         int 10h
     ENDM limpiar
 
-    readtext MACRO                                            ; ▬▬▬▬▬ LEER DE CONSOLA
+    readtext MACRO                                            ;? ▬▬▬▬▬ LEER DE CONSOLA
         PUSHA
         CALL readtext_
         POPA
@@ -170,64 +172,72 @@ KEY_PRESSED                     DB  ?
         print saltolinea
     ENDM println
 
-                    ;   ▜▛ ▞▚ ▙ ▙▄ █☰ 🆁 ██ ▟▛ 
+                    ;!   ▜▛ ▞▚ ▙ ▙▄ █☰ 🆁 ██ ▟▛ 
     painttablero MACRO
         PUSHA
         CALL painttablero_
         POPA
     ENDM painttablero
 
-    obtainrandom MACRO
-        PUSHA
-        CALL obtainrandom_
-        POPA
-    ENDM obtainrandom
     OPCIONDEMENU MACRO
         PUSHA
         CALL OPCIONDEMENU_
         POPA
     ENDM OPCIONDEMENU
+
     INICIODEJUEGOM MACRO
         PUSHA
         CALL INICIODEJUEGOM_
         POPA
     ENDM INICIODEJUEGOM
+
     CARGADEJUEGOM MACRO
         PUSHA
         CALL CARGADEJUEGOM_
         POPA
     ENDM CARGADEJUEGOM
-; ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬      █▀▄▀█ ▄▀█ █ █▄░█       ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
-; ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬      █░▀░█ █▀█ █ █░▀█       ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+    ; POSICIONAR CURSOR
+    poscursor MACRO POSXTEMP, POSYTEMP
+        ; PUSHA
+        MOV AL, POSXTEMP
+        MOV POSX, AL
+        MOV AL, POSYTEMP
+        MOV POSY, AL
+        CALL poscursor_
+        ; POPA
+    ENDM poscursor
+;! ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬      █▀▄▀█ ▄▀█ █ █▄░█       ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+;! ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬      █░▀░█ █▀█ █ █░▀█       ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 main PROC FAR
     MOV AX, @DATA
     MOV DS, AX
     MOV ES, AX
     ;misdatos
     ;esperaenter
-    ;paint  0, 0, 800, 600, BLACK ;LIMPIA TODO :V
+    ;paint  0, 0, 800, 600, BLACK ;*LIMPIA TODO MODO VIDEO:V
     ;menu
     ;esperaenter
-    limpiar
-
+    limpiar  ;* limpio la pantalla
+    poscursor 6,22
     print tm1c
+    poscursor 9,22
+    ;poscursor 8,22
     print tm2c
+    ;poscursor 10,22
     print tm3c
+    ;poscursor 12,22
     print tm4c
+    ;poscursor 16,29
     readtext
-
     OPCIONDEMENU
-
-    ;limpiar
     mov ax, 4c00h
     int 21h
     HLT ; para decirle al CPU que se estara ejecutando varias veces (detiene CPU hasta sig interrupcion)
     RET
 main    ENDP
-
-
-
-;☻ ===================== METODO MOSTRAR DATOS ======================= ☻
+;! ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬ 
+;! ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
+;? ☻ ===================== METODO MOSTRAR DATOS ======================= ☻
 misdatos_     PROC NEAR
     MOV AX,4F02H           ;SETEAMOS EL MODO VIDEO INT 10   800*600
     MOV BX,103H
@@ -244,7 +254,7 @@ misdatos_     PROC NEAR
     RET
 misdatos_     ENDP
 
-;☻ ===================== METODO MOSTRAR DATOS ======================= ☻
+;?☻ ===================== METODO MOSTRAR DATOS ======================= ☻
 menu_     PROC NEAR
     PAINTTEXT tm1 , 0820H , 0FF26H
     PAINTTEXT tm2 , 0F10h , 0FF0FH
@@ -254,7 +264,7 @@ menu_     PROC NEAR
 menu_     ENDP
 
 
-;☻ ===================== METODO IMPRIMIR ======================= ☻
+;?☻ ===================== METODO IMPRIMIR ======================= ☻
 PAINTTEXT_    PROC NEAR
     MOV AX,1301H
     MOV BX,BP
@@ -266,7 +276,7 @@ PAINTTEXT_    PROC NEAR
     RET
 PAINTTEXT_    ENDP
 
-;☻ ===================== PRESIONAR TECLAS ======================= ☻
+;?☻ ===================== PRESIONAR TECLAS ======================= ☻
 enterclick_    PROC    NEAR
     esperar:
         esperatecla
@@ -283,7 +293,7 @@ esperatecla_ ENDP
 
 
 
-;☻ ===================== DIBUJAR EN PANTALLA ======================= ☻
+;?☻ ===================== DIBUJAR EN PANTALLA ======================= ☻
 paint_   PROC  NEAR
     ;PARAMETERS
     ; X1, Y1, X2, Y2, AL = COLOR
@@ -304,7 +314,7 @@ paint_   PROC  NEAR
     RET
 paint_ ENDP
 
-;☻ ===================== DIBUJAR EN PANTALLA ======================= ☻
+;?☻ ===================== DIBUJAR EN PANTALLA ======================= ☻
 readtext_ PROC NEAR
     xor si , si
     Leer:
@@ -323,7 +333,7 @@ readtext_ PROC NEAR
     RET
 readtext_ ENDP
 
-;☻ ===================== DIBUJAR EN PANTALLA ======================= ☻
+;?☻ ===================== DIBUJAR EN PANTALLA ======================= ☻
 painttablero_ PROC NEAR
     mov si, 00
     mov di, 00
@@ -348,68 +358,77 @@ painttablero_ PROC NEAR
     RET
 painttablero_ ENDP
 
-;☻ ===================== SORTEO DEL JUGADOR QUE INICIA ======================= ☻
-obtainrandom_ PROC NEAR
-    RANDGEN:         ; generate a rand no using the system time
-    RANDSTART:
-    MOV AH, 00h  ; interrupts to get system time
-    INT 1AH      ; CX:DX now hold number of clock ticks since midnight
-
-    mov  ax, dx
-    xor  dx, dx
-    mov  cx, 2
-    div  cx       ; here dx contains the remainder of the division - from 1 to 2
-
-    add  dl, '1'  ; DL TIENE EL VALOR ENTRE 1 Y 2
-    RET
-obtainrandom_ ENDP
 
 
-;☻ ===================== OPCIONES DEL MENU ======================= ☻
+
+;?☻ ===================== OPCIONES DEL MENU ======================= ☻
 OPCIONDEMENU_ PROC NEAR
-    CMP keypress,1      ; si tecla es 1
+    CMP keypress,'1'     ; si tecla es 1
     JNE CARGARJUEGOTEMP     ; sino es 1 se va a cargar
     JE INICIARJUEGO     ; SI SI ES SE VA A INICIARJUEGO
 
     CARGARJUEGOTEMP:
-        CMP keypress,2  ; si tecla es 2
+        CMP keypress,'2'  ; si tecla es 2
         JNE SALIR ; sino es 2 se va a SALIR
         JE CARGARJUEGO ; SI SI ES SE VA A CARGARJUEGO
 
     CARGARJUEGO:
         CARGADEJUEGOM
     INICIARJUEGO:
-        obtainrandom ; OBTENGO QUIEN VA A SER EL PRIMERO EN JUGAR:
         INICIODEJUEGOM
     SALIR:
     RET
 OPCIONDEMENU_ ENDP
 
-;☻ =====================INICIO DEL JUEGO ================== ===== ☻
+;?☻ =====================INICIO DEL JUEGO ================== ===== ☻
 INICIODEJUEGOM_ PROC NEAR
+    limpiar
     JUGADORINICIAL:
-        CMP dl, 1
+        RANDSTART:; OBTENGO QUIEN VA A SER EL PRIMERO EN JUGAR:
+            MOV AH, 00h  ; interrupcion para jalar el tiempo en el sistema
+            INT 1AH      ; CX:DX  toma numeros del reloj desde medianoche
+            mov  ax, dx
+            xor  dx, dx
+            mov  cx, 2
+            div  cx       ;DX tiene la divicion en mi caso - de 1 a 2
+            add  dl, '1'  ; DL TIENE EL VALOR ENTRE 1 Y 2
+            mov ah,2h
+            int 21h
+
+        CMP dl, '1'
         JNE INICIAELJUGADORDOS ; sino es 1 se va a JUGADOR 2
         JE INICIAELJUGADORUNO ; SI SI ES se va a JUGADOR 1
     INICIAELJUGADORUNO:
         print iniciaunotext
+
     INICIAELJUGADORDOS:
         print iniciadostext
 
     RET
 INICIODEJUEGOM_ ENDP
 
-;☻ ===================== CARGA DEL JUEGO ======================= ☻
+;?☻ ===================== CARGA DEL JUEGO ======================= ☻
 CARGADEJUEGOM_ PROC NEAR
     RET
 CARGADEJUEGOM_ ENDP
 
+;?☻ ===================== POSICIONAR EL CURSOR ======================= ☻
+poscursor_ PROC NEAR
+    ; FUNCION COLOCAR CURSOR
+
+    mov ah, 02h ; FUNCION PARA COLOCAR EL CURSOR
+    mov dh, POSX ; 12 FILA
+    mov dl, POSY ; 12 COLUMNA
+    INT 10h
+    RET
+poscursor_ ENDP
+
 end     MAIN
 
-;  ░█████╗░██╗░░░░░██╗░░░██╗░█████╗░██████╗░░█████╗░    ░██████╗░█████╗░░█████╗░░█████╗░██████╗░
-;  ██╔══██╗██║░░░░░██║░░░██║██╔══██╗██╔══██╗██╔══██╗    ██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔══██╗
-;  ███████║██║░░░░░╚██╗░██╔╝███████║██████╔╝██║░░██║    ╚█████╗░██║░░██║██║░░╚═╝██║░░██║██████╔╝
-;  ██╔══██║██║░░░░░░╚████╔╝░██╔══██║██╔══██╗██║░░██║    ░╚═══██╗██║░░██║██║░░██╗██║░░██║██╔═══╝░
-;  ██║░░██║███████╗░░╚██╔╝░░██║░░██║██║░░██║╚█████╔╝    ██████╔╝╚█████╔╝╚█████╔╝╚█████╔╝██║░░░░░
-;  ╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░    ╚═════╝░░╚════╝░░╚════╝░░╚════╝░╚═╝░░░░░
+;*  ░█████╗░██╗░░░░░██╗░░░██╗░█████╗░██████╗░░█████╗░    ░██████╗░█████╗░░█████╗░░█████╗░██████╗░
+;*  ██╔══██╗██║░░░░░██║░░░██║██╔══██╗██╔══██╗██╔══██╗    ██╔════╝██╔══██╗██╔══██╗██╔══██╗██╔══██╗
+;*  ███████║██║░░░░░╚██╗░██╔╝███████║██████╔╝██║░░██║    ╚█████╗░██║░░██║██║░░╚═╝██║░░██║██████╔╝
+;*  ██╔══██║██║░░░░░░╚████╔╝░██╔══██║██╔══██╗██║░░██║    ░╚═══██╗██║░░██║██║░░██╗██║░░██║██╔═══╝░
+;*  ██║░░██║███████╗░░╚██╔╝░░██║░░██║██║░░██║╚█████╔╝    ██████╔╝╚█████╔╝╚█████╔╝╚█████╔╝██║░░░░░
+;*  ╚═╝░░╚═╝╚══════╝░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░    ╚═════╝░░╚════╝░░╚════╝░░╚════╝░╚═╝░░░░░
 
