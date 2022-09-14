@@ -105,7 +105,10 @@ INDEXtempBARCOS                Dw ?
 
 ;* --------------------------  ERRORES TEXTS -----------------------------
 NUMERONOVALIDO            db "Posicion mala", "$"
-;* --------------------------  MIS_DATOS -----------------------------
+
+;* --------------------------  REPORTES -----------------------------
+Filenamejug1  db  "ESTADO_JUEGO_JUG1.htm", 0
+Filenamejug2  db  "ESTADO_JUEGO_JUG1.htm", 0
 ;* --------------------------  MIS_DATOS -----------------------------
 ;* --------------------------  MIS_DATOS -----------------------------
 temp DW  ?
