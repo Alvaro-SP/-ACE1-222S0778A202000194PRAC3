@@ -6,7 +6,6 @@
 .386
 .STACK 64
 .DATA
-
 ;*--------------------------  MIS_DATOS -----------------------------
 tb1             DB   38,'BIENVENIDO AL JUEGO BATTLESHIPS !!!!!!'
 tb2             DB   38,'Universidad de San Carlos de Guatemala'
@@ -22,7 +21,9 @@ tm1             DB   29,'------- MENU PRINCIPAL ------'
 tm2             DB   16,'1. Iniciar Juego'
 tm3             DB   15,'2. Cargar Juego'
 tm4             DB   8,'3. Salir'
-keypress          DB ?, "$"
+keypress          DB ?
+keypresstempY          DB ?
+keypresstempX          DB ?
 tm1c             DB   '------- MENU PRINCIPAL ------',10, 13, "$"
 tm2c             DB   '         1. Iniciar Juego',10, 13, "$"
 tm3c             DB   '         2. Cargar Juego',10, 13, "$"
@@ -58,7 +59,7 @@ titlebarcosdisponibles db "*** BARCOS DISPONIBLES ***", "$"
 titleseleccionebarco db "Seleccione barco a posicionar", "$"
 
 ;*BARCOS
-textoBoteneumatico         db "1. Bote Neumatico", "$"
+textoBoteneumatico          db "1. Bote Neumatico", "$"
 textoDestructoramericano    db "2. Destructor Americano", "$"
 textoDestructorjapones      db "3. Destructor Japones", "$"
 textoAcorazado              db "4. Acorazado", "$"
@@ -68,12 +69,23 @@ decorotexto1                db 219,219,219,219,219,219,219,219,219,219,219,219,2
 dt2                         db 219,"$"
 borrarlinea     DB "                                        ",13
 ;* --------------------------  MATRICES DE LOS JUGADORES -----------------------------
-matriz1 DB 10 dup(0)
-matriz2 DB 10 dup(0)
+matriz1 DB 100 dup("0")
+matriz2 DB 100 dup('0')
+INDEX         Dw ?
+INDEXtemp                Dw ?
+;* --------------------------  DISPAROS -----------------------------
+shootjug1x      DB ?
+shootjug1y      DB ?
+shootjug2x      DB ?
+shootjug2y      DB ?
+;* --------------------------  MATRICES DE LOS BARCOS -----------------------------
+barcos1 DB 100 dup("0")
+barcos2 DB 100 dup('0')
+INDEXBARCOS         Dw ?
+INDEXtempBARCOS                Dw ?
 
-;* --------------------------  MIS_DATOS -----------------------------
-;* --------------------------  MIS_DATOS -----------------------------
-;* --------------------------  MIS_DATOS -----------------------------
+;* --------------------------  ERRORES TEXTS -----------------------------
+NUMERONOVALIDO            db "Posicion mala", "$"
 ;* --------------------------  MIS_DATOS -----------------------------
 ;* --------------------------  MIS_DATOS -----------------------------
 ;* --------------------------  MIS_DATOS -----------------------------
@@ -206,8 +218,113 @@ KEY_PRESSED                     DB  ?
     ENDM poscursor
 
     decorobarra MACRO
-        decorobarra_
+        CALL decorobarra_
     ENDM decorobarra
+
+    recorrerm1 MACRO
+        PUSHA
+        CALL recorrerm1_
+        POPA
+    ENDM recorrerm1
+    ; * --------------------- HACER DISPAROS ---------------------
+    shoot1 MACRO POSXTEMP, POSYTEMP
+        ; PUSHA
+        MOV AL, POSXTEMP
+        MOV shootjug1x, AL
+        MOV AL, POSYTEMP
+        MOV shootjug1y, AL
+        CALL shoot1_
+        ; POPA
+    ENDM shoot1
+
+    shoot2 MACRO  POSXTEMP, POSYTEMP
+        ; PUSHA
+        MOV AL, POSXTEMP
+        MOV shootjug2x, AL
+        MOV AL, POSYTEMP
+        MOV shootjug2y, AL
+        CALL shoot2_
+        ; POPA
+    ENDM shoot2
+
+    pasarreadtextanumeroY MACRO
+        PUSHA
+        CALL pasarreadtextanumeroY_
+        POPA
+    ENDM pasarreadtextanumeroY
+
+    pasarreadtextanumeroX MACRO
+        PUSHA
+        CALL pasarreadtextanumeroX_
+        POPA
+    ENDM pasarreadtextanumeroX
+
+    ; * ---------------------IMPRIMIR TIROS -----------------------
+    PRINTSHOOTS MACRO
+        STARTING:
+            CMP matriz1[si], "X"
+            JNE NOHAYTIRO
+            JE SIHAYTIRO
+        NOHAYTIRO:
+            CMP matriz1[si], "O"
+            JNE NOHATIRADO
+            JE TIROPERONODIO
+        TIROPERONODIO:
+            print dshoot
+            JMP SALIR
+        NOHATIRADO:
+            print noship
+            JMP SALIR
+        SIHAYTIRO:
+            print shoot
+            JMP SALIR
+        SALIR:
+    ENDM PRINTSHOOTS
+
+    ; * --------------------- IMPRIMIR BARCOS ---------------------
+    PRINTSHIPS MACRO
+        STARTING:
+            CMP matriz1[si], "1"
+            JNE printvacio
+            JE printlleno
+        printvacio:
+            print noship
+            JMP SALIR
+        printlleno:
+            print ship
+            JMP SALIR
+        SALIR:
+    ENDM PRINTSHIPS
+    ; * ☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻ VISTA DE ENTRADA BARCOS ☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻
+    PRINTVIEWSHIPS MACRO
+        poscursor 1, 49
+        print titlebarcosdisponibles
+        poscursor 13,44
+        print titleseleccionebarco
+        ;* texto decoracion
+        poscursor 0,43
+        print decorotexto1
+        poscursor 10,43
+        print decorotexto1
+        poscursor 24,43
+        print decorotexto1
+        decorobarra
+        ; ? *********  imprimo barcos disponibles
+        poscursor 3,50                  ;* BARCO 1
+        print textoBoteneumatico
+        poscursor 4,50                  ;* BARCO 2
+        print textoDestructoramericano
+        poscursor 5,50                  ;* BARCO 3
+        print textoDestructorjapones
+        poscursor 6,50                  ;* BARCO 4
+        print textoAcorazado
+        poscursor 7,50                  ;* BARCO 5
+        print textoPortaviones
+
+        poscursor 12, 49
+        print titleingresebarcos
+        poscursor
+    ENDM PRINTVIEWSHIPS
 ;! ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬      █▀▄▀█ ▄▀█ █ █▄░█       ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 ;! ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬      █░▀░█ █▀█ █ █░▀█       ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 main PROC FAR
@@ -219,6 +336,7 @@ main PROC FAR
     ;paint  0, 0, 800, 600, BLACK ;*LIMPIA TODO MODO VIDEO:V
     ;menu
     ;esperaenter
+    
     limpiar  ;* limpio la pantalla
     poscursor 6,22
     print tm1c
@@ -229,6 +347,17 @@ main PROC FAR
     poscursor 12,22
     print tm4c
     poscursor 16,29
+    limpiar
+
+    ;************* obtengo valores X y Y
+    readtext
+    pasarreadtextanumeroX
+    readtext
+    pasarreadtextanumeroY
+    shoot1 keypresstempX, keypresstempY                ;! DISPARO
+
+    readtext
+    recorrerm1
     readtext
     OPCIONDEMENU
     mov ax, 4c00h
@@ -315,7 +444,7 @@ paint_   PROC  NEAR
     RET
 paint_ ENDP
 
-;?☻ ===================== DIBUJAR EN PANTALLA ======================= ☻
+;?☻ ===================== CONCATENAR TEXTO ENTRADA ======================= ☻
 readtext_ PROC NEAR
     xor si , si
     Leer:
@@ -334,17 +463,22 @@ readtext_ PROC NEAR
     RET
 readtext_ ENDP
 
-;?☻ ===================== DIBUJAR EN PANTALLA ======================= ☻
+;?☻ ===================== PINTAR TABLERO SHOOTS 1======================= ☻
 painttablero_ PROC NEAR
     mov si, 00
     mov di, 00
+    MOV INDEX, 0
     paintfila:
         cmp si, 10
         jne printelcuadro
         je imprimirsaltolinea
 
     printelcuadro:
-        print noship
+        mov INDEXtemp, si
+        mov si, INDEX           ;* mostrar lo que hay en la matriz
+        PRINTSHOOTS
+        mov si, INDEXtemp
+        INC INDEX
         INC si
         JMP paintfila
 
@@ -360,7 +494,9 @@ painttablero_ PROC NEAR
 painttablero_ ENDP
 
 decorobarra_ PROC NEAR
-    
+    PR:
+    print dt2
+    RET
 decorobarra_ ENDP
 
 
@@ -427,25 +563,7 @@ INICIODEJUEGOM_ PROC NEAR
         poscursor 12, 0
         painttablero
 
-        poscursor 1, 49
-        print titlebarcosdisponibles
-        poscursor 13,44
-        print titleseleccionebarco
-        ;* texto decoracion
-        poscursor 0,43
-        print decorotexto1
-        poscursor 10,43
-        print decorotexto1
-        poscursor 24,43
-        print decorotexto1
-        decorobarra
-        ;* imprimo barcos disponibles
-        poscursor 3,50
-        print textoBoteneumatico
-        poscursor 12, 49
-        print titleingresebarcos
-
-        
+        PRINTVIEWSHIPS
 
         readtext
 
@@ -463,6 +581,238 @@ CARGADEJUEGOM_ PROC NEAR
     RET
 CARGADEJUEGOM_ ENDP
 
+;?☻ ===================== RECORRER MATRIZ 1 ======================= ☻
+recorrerm1_ PROC NEAR
+    mov si, 00
+    mov di, 00
+    MOV INDEX, 0
+    paintfila:
+        cmp si, 10
+        jne printelcuadro
+        je imprimirsaltolinea
+
+    printelcuadro:
+        mov INDEXtemp, si
+
+        mov si, INDEX           ;* mostrar lo que hay en la matriz
+        mov dl, matriz1[si]
+        mov ah, 2h
+        int 21h
+        mov si, INDEXtemp
+
+        INC si
+        INC index      ;* AUMENTO EL INDICE PRINCIPAL
+        JMP paintfila
+
+    imprimirsaltolinea:
+        mov si, 00
+        INC di
+        print saltolinea
+        cmp di, 10
+        jne printelcuadro
+        je exit
+    exit:
+    RET
+recorrerm1_ ENDP
+
+
+;?☻ ===================== HACER DISPARO JUG 1 ======================= ☻
+shoot1_ PROC NEAR
+    ;! HACER EL DISPARO EN POSICION AL = Y     AX = X
+    ; mov dh, shootjug1y
+    ; mov dl, shootjug1x
+    mov al, shootjug1y   ; indice externo a accesar
+    mov bl, 10  ; tamaño de cada arreglo almacenado en el primer nivel de la matriz
+    mul bl      ; nos deja la respuesta en el ax.  Ocupamos que la dirección sea en 16 bits
+
+    movzx bx, shootjug1x
+    add ax, bx   ; sumamos el indice interno a la cantidad de celdas acumulada
+    mov si, ax  ; Movemos la dirección al puntero SI
+    ; mov dl, si
+    ; mov ah, 2h
+    ; int 21h
+    Mov byte ptr matriz1[si], "1" ; finalmente movemos el dato.  Es importante lo de word ptr para indicar el tamaño
+
+    RET
+shoot1_ ENDP
+
+;?☻ ===================== HACER DISPARO JUG 2 ======================= ☻
+shoot2_ PROC NEAR
+    ;! HACER EL DISPARO EN POSICION AL = Y     AX = X
+    mov al, 2   ; indice externo a accesar
+    mov bl, shootjug2y  ; tamaño de cada arreglo almacenado en el primer nivel de la matriz
+    mul bl      ; nos deja la respuesta en el ax.  Ocupamos que la dirección sea en 16 bits
+    movzx bx, shootjug2x
+    add ax, bx   ; sumamos el indice interno a la cantidad de celdas acumulada
+    ;shl ax, 1   ; Multiplicamos por 2 que es el tamaño del dato de cada celda
+    mov si, ax  ; Movemos la dirección al puntero SI
+    Mov byte ptr matriz2[si], "1" ; finalmente movemos el dato.  Es importante lo de word ptr para indicar el tamaño
+
+    RET
+shoot2_ ENDP
+
+;?☻ =====================READTEXT A NUMERO ======================= ☻
+pasarreadtextanumeroY_ PROC NEAR
+    INICIO:
+        CMP keypress, "a"
+        JNE NOESUNO
+        JE SIESUNO
+    SIESUNO:
+        mov keypresstempY,0
+        JMP SALIR
+    NOESUNO:
+        CMP keypress, "2"
+        JNE NOESDOS
+        JE SIESDOS
+    SIESDOS:
+        mov keypresstempY,1
+        JMP SALIR
+    NOESDOS:
+        CMP keypress, "c"
+        JNE NOESTRES
+        JE SIESTRES
+    SIESTRES:
+        mov keypresstempY,2
+        JMP SALIR
+    NOESTRES:
+        CMP keypress, "4"
+        JNE NOESCUATRO
+        JE SIESCUATRO
+    SIESCUATRO:
+        mov keypresstempY,3
+        JMP SALIR
+    NOESCUATRO:
+        CMP keypress, "e"
+        JNE NOESCINCO
+        JE SIESCINCO
+    SIESCINCO:
+        mov keypresstempY,4
+        JMP SALIR
+    NOESCINCO:
+        CMP keypress, "6"
+        JNE NOESSEIS
+        JE SIESSEIS
+    SIESSEIS:
+        mov keypresstempY,5
+        JMP SALIR
+    NOESSEIS:
+        CMP keypress, "g"
+        JNE NOESSIETE
+        JE SIESSIETE
+    SIESSIETE:
+        mov keypresstempY,6
+        JMP SALIR
+    NOESSIETE:
+        CMP keypress, "8"
+        JNE NOESOCHO
+        JE SIESOCHO
+    SIESOCHO:
+        mov keypresstempY,7
+        JMP SALIR
+    NOESOCHO:
+        CMP keypress, "i"
+        JNE NOESNUEVE
+        JE SIESNUEVE
+    SIESNUEVE:
+        mov keypresstempY,8
+        JMP SALIR
+    NOESNUEVE:
+        CMP keypress[0], "1"
+        JNE NOESDIEZ
+        JE ESDIEZTEMP
+        ESDIEZTEMP:
+            CMP keypress[0], "0"
+            JNE NOESDIEZ
+            JE SIESDIEZ
+    SIESDIEZ:
+        mov keypresstempY,9
+        JMP SALIR
+    NOESDIEZ:
+        print NUMERONOVALIDO
+        readtext
+        JMP INICIO
+    SALIR:
+    RET
+pasarreadtextanumeroY_ ENDP
+
+pasarreadtextanumeroX_ PROC NEAR
+    INICIO:
+        CMP keypress, "1"
+        JNE NOESUNO
+        JE SIESUNO
+    SIESUNO:
+        mov keypresstempX,0
+        JMP SALIR
+    NOESUNO:
+        CMP keypress, "b"
+        JNE NOESDOS
+        JE SIESDOS
+    SIESDOS:
+        mov keypresstempX,1
+        JMP SALIR
+    NOESDOS:
+        CMP keypress, "3"
+        JNE NOESTRES
+        JE SIESTRES
+    SIESTRES:
+        mov keypresstempX,2
+        JMP SALIR
+    NOESTRES:
+        CMP keypress, "d"
+        JNE NOESCUATRO
+        JE SIESCUATRO
+    SIESCUATRO:
+        mov keypresstempX,3
+        JMP SALIR
+    NOESCUATRO:
+        CMP keypress, "5"
+        JNE NOESCINCO
+        JE SIESCINCO
+    SIESCINCO:
+        mov keypresstempX,4
+        JMP SALIR
+    NOESCINCO:
+        CMP keypress, "f"
+        JNE NOESSEIS
+        JE SIESSEIS
+    SIESSEIS:
+        mov keypresstempX,5
+        JMP SALIR
+    NOESSEIS:
+        CMP keypress, "7"
+        JNE NOESSIETE
+        JE SIESSIETE
+    SIESSIETE:
+        mov keypresstempX,6
+        JMP SALIR
+    NOESSIETE:
+        CMP keypress, "h"
+        JNE NOESOCHO
+        JE SIESOCHO
+    SIESOCHO:
+        mov keypresstempX,7
+        JMP SALIR
+    NOESOCHO:
+        CMP keypress, "9"
+        JNE NOESNUEVE
+        JE SIESNUEVE
+    SIESNUEVE:
+        mov keypresstempX,8
+        JMP SALIR
+    NOESNUEVE:
+        CMP keypress, "j"
+        JNE NOESDIEZ
+        JE SIESDIEZ
+    SIESDIEZ:
+        mov keypresstempX,9
+        JMP SALIR
+    NOESDIEZ:
+        print NUMERONOVALIDO
+        readtext
+        JMP INICIO
+    SALIR:
+    RET
+pasarreadtextanumeroX_ ENDP
 
 
 end     MAIN
