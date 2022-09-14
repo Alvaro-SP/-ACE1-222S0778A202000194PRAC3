@@ -362,7 +362,7 @@ KEY_PRESSED                     DB  ?
         CALL COLOCARBARCO5JUG2_
         POPA
     ENDM COLOCARBARCO5JUG2
-    
+
                     ;! ▀▀▀▀▀▀▀▀▀▀  MENU  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀
     OPCIONDEMENU MACRO
         PUSHA
@@ -446,6 +446,12 @@ KEY_PRESSED                     DB  ?
         CALL BARCOQUEELIGIO_
         POPA
     ENDM BARCOQUEELIGIO
+
+    BARCOQUEELIGIO2 MACRO
+        PUSHA
+        CALL BARCOQUEELIGIO2_
+        POPA
+    ENDM BARCOQUEELIGIO2
 
 
     ; * ☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻ VISTA DE ENTRADA BARCOS ☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻
@@ -857,6 +863,9 @@ INICIODEJUEGOM_ PROC NEAR
 
         PRINTVIEWSHIPS      ;* MOSTRAR VISTA PA PEDIR SHIPS
 
+        JMP PEDIRBARCOS1
+
+    PEDIRBARCOS1:
         ;? ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░░ PIDO BARCOS ░░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓
         poscursor 15,51     ;! PIDO BARCO 1 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
@@ -893,8 +902,7 @@ INICIODEJUEGOM_ PROC NEAR
         poscursor 10, 25
         print textiniciandojuego
         readtext
-        JMP TURNOJUGADORDOS
-
+        JMP PEDIRBARCOS2TEMP
     
     INICIAELJUGADORDOS:
         poscursor 10, 20
@@ -914,36 +922,106 @@ INICIODEJUEGOM_ PROC NEAR
 
         PRINTVIEWSHIPS      ;* MOSTRAR VISTA PA PEDIR SHIPS
 
+        JMP PEDIRBARCOS1TEMP
+    PEDIRBARCOS1TEMP:
         ;? ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░░ PIDO BARCOS ░░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓
         poscursor 15,51     ;! PIDO BARCO 1 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
-        BARCOQUEELIGIO
+        BARCOQUEELIGIO2
 
         poscursor 15,51     ;! PIDO BARCO 2 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
-        BARCOQUEELIGIO
+        BARCOQUEELIGIO2
 
         poscursor 15,51     ;! PIDO BARCO 3 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
-        BARCOQUEELIGIO
+        BARCOQUEELIGIO2
 
         poscursor 15,51     ;! PIDO BARCO 4 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
-        BARCOQUEELIGIO
+        BARCOQUEELIGIO2
 
         poscursor 15,51     ;! PIDO BARCO 5 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
-        BARCOQUEELIGIO
+        BARCOQUEELIGIO2
+
+        limpiar
+        JMP TURNOJUGADORUNO
+    PEDIRBARCOS2TEMP:
+         ;? ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░░ PIDO BARCOS ░░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓
+        poscursor 15,51     ;! PIDO BARCO 1 A POSICIONAR
+        ; EL USUARIO ESCRIBE SU BARCO
+        readtext                ;? barco elegido guardado en keypress
+
+        BARCOQUEELIGIO2
+
+        poscursor 15,51     ;! PIDO BARCO 2 A POSICIONAR
+        ; EL USUARIO ESCRIBE SU BARCO
+        readtext                ;? barco elegido guardado en keypress
+
+        BARCOQUEELIGIO2
+
+        poscursor 15,51     ;! PIDO BARCO 3 A POSICIONAR
+        ; EL USUARIO ESCRIBE SU BARCO
+        readtext                ;? barco elegido guardado en keypress
+
+        BARCOQUEELIGIO2
+
+        poscursor 15,51     ;! PIDO BARCO 4 A POSICIONAR
+        ; EL USUARIO ESCRIBE SU BARCO
+        readtext                ;? barco elegido guardado en keypress
+
+        BARCOQUEELIGIO2
+
+        poscursor 15,51     ;! PIDO BARCO 5 A POSICIONAR
+        ; EL USUARIO ESCRIBE SU BARCO
+        readtext                ;? barco elegido guardado en keypress
+
+        BARCOQUEELIGIO2
+
+        limpiar
+        JMP TURNOJUGADORDOS
+    PEDIRBARCOS2:
+        ;? ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░░ PIDO BARCOS ░░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓
+        poscursor 15,51     ;! PIDO BARCO 1 A POSICIONAR
+        ; EL USUARIO ESCRIBE SU BARCO
+        readtext                ;? barco elegido guardado en keypress
+
+        BARCOQUEELIGIO2
+
+        poscursor 15,51     ;! PIDO BARCO 2 A POSICIONAR
+        ; EL USUARIO ESCRIBE SU BARCO
+        readtext                ;? barco elegido guardado en keypress
+
+        BARCOQUEELIGIO2
+
+        poscursor 15,51     ;! PIDO BARCO 3 A POSICIONAR
+        ; EL USUARIO ESCRIBE SU BARCO
+        readtext                ;? barco elegido guardado en keypress
+
+        BARCOQUEELIGIO2
+
+        poscursor 15,51     ;! PIDO BARCO 4 A POSICIONAR
+        ; EL USUARIO ESCRIBE SU BARCO
+        readtext                ;? barco elegido guardado en keypress
+
+        BARCOQUEELIGIO2
+
+        poscursor 15,51     ;! PIDO BARCO 5 A POSICIONAR
+        ; EL USUARIO ESCRIBE SU BARCO
+        readtext                ;? barco elegido guardado en keypress
+
+        BARCOQUEELIGIO2
 
         ;? ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░░ INICIO TURNO ░░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓
         limpiar
@@ -1357,7 +1435,7 @@ BARCOQUEELIGIO2_ PROC NEAR
         print textyahaybarcoalli
         JMP SIUNO
     PUEDOPONERBARQUITO1:
-        COLOCARBARCO1
+        COLOCARBARCO1JUG2
         JMP SALIR
     
     NODOS:
@@ -1386,7 +1464,7 @@ BARCOQUEELIGIO2_ PROC NEAR
         print textyahaybarcoalli
         JMP SIDOS
     PUEDOPONERBARQUITO2:
-        COLOCARBARCO2
+        COLOCARBARCO2JUG2
         JMP SALIR
 
     NOTRES:
@@ -1415,7 +1493,7 @@ BARCOQUEELIGIO2_ PROC NEAR
         print textyahaybarcoalli
         JMP SITRES
     PUEDOPONERBARQUITO3:
-        COLOCARBARCO3
+        COLOCARBARCO3JUG2
         JMP SALIR
 
     NOCUATRO:
@@ -1444,7 +1522,7 @@ BARCOQUEELIGIO2_ PROC NEAR
         print textyahaybarcoalli
         JMP SICUATRO
     PUEDOPONERBARQUITO4:
-        COLOCARBARCO4
+        COLOCARBARCO4JUG2
         JMP SALIR
     SICINCO:                      ;! SI ES 5
         poscursor 19,71 ;X
@@ -1468,7 +1546,7 @@ BARCOQUEELIGIO2_ PROC NEAR
         print textyahaybarcoalli
         JMP SICINCO
     PUEDOPONERBARQUITO5:
-        COLOCARBARCO5
+        COLOCARBARCO5JUG2
         JMP SALIR
 
     NOCINCO:
@@ -1930,7 +2008,7 @@ COLOCARBARCO4_ ENDP
     RET
 COLOCARBARCO5_ ENDP
 
-;?☻ ===================== COLOCAR BARCOS JUGADOR 1 ======================= ☻
+;?☻ ===================== COLOCAR BARCOS JUGADOR 2 ======================= ☻
 COLOCARBARCO1JUG2_ PROC NEAR
     VERROTACION:
         CMP ROTACIONBARCOSELECCIONADO, "1"
@@ -1943,7 +2021,7 @@ COLOCARBARCO1JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
 
@@ -1953,7 +2031,7 @@ COLOCARBARCO1JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
         JMP SALIR
     ESVERTICAL:                                 ;! ██
         mov al, POSYBARCOSELECCIONADO           ;! ██
@@ -1962,7 +2040,7 @@ COLOCARBARCO1JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
         
@@ -1972,7 +2050,7 @@ COLOCARBARCO1JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
         JMP SALIR
     SALIR:
     RET
@@ -1990,7 +2068,7 @@ COLOCARBARCO2JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
@@ -2001,7 +2079,7 @@ COLOCARBARCO2JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
@@ -2012,7 +2090,7 @@ COLOCARBARCO2JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
         JMP SALIR
     ESVERTICAL:                                 ;! ██
         mov al, POSYBARCOSELECCIONADO           ;! ██
@@ -2021,7 +2099,7 @@ COLOCARBARCO2JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
@@ -2032,7 +2110,7 @@ COLOCARBARCO2JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
@@ -2043,7 +2121,7 @@ COLOCARBARCO2JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
         JMP SALIR
     SALIR:
     RET
@@ -2061,7 +2139,7 @@ COLOCARBARCO3JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
@@ -2072,7 +2150,7 @@ COLOCARBARCO3JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
@@ -2083,7 +2161,7 @@ COLOCARBARCO3JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         JMP SALIR
     ESVERTICAL:                                 ;! ██
@@ -2093,7 +2171,7 @@ COLOCARBARCO3JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
@@ -2104,7 +2182,7 @@ COLOCARBARCO3JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
@@ -2115,7 +2193,7 @@ COLOCARBARCO3JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         JMP SALIR
     SALIR:
@@ -2134,7 +2212,7 @@ COLOCARBARCO4JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
@@ -2145,7 +2223,7 @@ COLOCARBARCO4JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
@@ -2156,7 +2234,7 @@ COLOCARBARCO4JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
@@ -2167,7 +2245,7 @@ COLOCARBARCO4JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
         JMP SALIR
     ESVERTICAL:                                 ;! ██
         mov al, POSYBARCOSELECCIONADO           ;! ██
@@ -2176,7 +2254,7 @@ COLOCARBARCO4JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
@@ -2187,7 +2265,7 @@ COLOCARBARCO4JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
@@ -2198,7 +2276,7 @@ COLOCARBARCO4JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
@@ -2209,7 +2287,7 @@ COLOCARBARCO4JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
         JMP SALIR
     SALIR:
     RET
@@ -2227,7 +2305,7 @@ COLOCARBARCO5JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
@@ -2238,7 +2316,7 @@ COLOCARBARCO5JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
@@ -2249,7 +2327,7 @@ COLOCARBARCO5JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
@@ -2260,7 +2338,7 @@ COLOCARBARCO5JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
@@ -2271,7 +2349,7 @@ COLOCARBARCO5JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
@@ -2282,7 +2360,7 @@ COLOCARBARCO5JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
         JMP SALIR
     ESVERTICAL:                                 ;! ██
         mov al, POSYBARCOSELECCIONADO           ;! ██
@@ -2291,7 +2369,7 @@ COLOCARBARCO5JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO         ;! ██
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
@@ -2302,7 +2380,7 @@ COLOCARBARCO5JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
@@ -2313,7 +2391,7 @@ COLOCARBARCO5JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
@@ -2324,7 +2402,7 @@ COLOCARBARCO5JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
 
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
@@ -2335,7 +2413,7 @@ COLOCARBARCO5JUG2_ PROC NEAR
         movzx bx, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
-        Mov byte ptr barcos1[si], "1"
+        Mov byte ptr barcos2[si], "1"
         JMP SALIR
     SALIR:
     RET
