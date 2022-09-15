@@ -31,7 +31,7 @@ tm4c             DB   '         3. Salir',10, 13, "$"
 ;*--------------------------  COLORES -----------------------------
 BLACK               EQU  00H
 
-;*---------------- COORDENADAS ----------
+;*-------------------------- COORDENADAS --------------------------
 POSX            DB  ?
 POSY            DB  ?
 
@@ -50,14 +50,29 @@ saltolinea      DB " ",10, 13, "$"
 ;* --------------------------  JUGADOR -----------------------------
 iniciaunotext db "---EL JUGADOR 1 INICIA LA PARTIDA---", 10, 13, "$"
 iniciadostext db "---EL JUGADOR 2 INICIA LA PARTIDA---", 10, 13, "$"
+titleturno1 db "---      TURNO DEL JUGADOR 1     ---", 10, 13, "$"
+titleturno2 db "---      TURNO DEL JUGADOR 2     ---", 10, 13, "$"
+titlegano1 db "--- EL JUGADOR 1 GANO LA PARTIDA ---", 10, 13, "$"
+titlegano2 db "--- EL JUGADOR 2 GANO LA PARTIDA ---", 10, 13, "$"
+
 textiniciandojuego db "--- INICIANDO JUEGO ---", "$"
 jugandojugador2 db "JUGANDO: JUGADOR 2", 10, 13, "$"
-jugandojugador1 db "JUGANDO: JUGADOR 2", 10, 13, "$"
+jugandojugador1 db "JUGANDO: JUGADOR 1", 10, 13, "$"
 titledisparos db "DISPAROS", "$"
 titlebarcos db "BARCOS", "$"
 titleingresebarcos db "INGRESO DE BARCOS", "$"
+titleingresodecoordenadas db "INGRESO DE COORDENADAS", "$"
 titlebarcosdisponibles db "*** BARCOS DISPONIBLES ***", "$"
 titleseleccionebarco db "Seleccione barco a posicionar", "$"
+textbarcosvivos db "BARCOS VIVOS", "$"
+textjugador1 db "Jugador 1=", "$"
+textjugador2 db "Jugador 2=", "$"
+textyasedisparoalli db "YA SE DISPARO ALLI", "$"
+textenterparaturnosiguiente db "ENTER PARA TURNO SIGUIENTE", "$"
+textsegurodeingresar db "ENTER PARA TURNO SIGUIENTE", "$"
+textjuegobattleships db "JUEGO BATTLESHIPS", "$"
+textconfirmaeldisparo db "Confirma el disparo? y/n", "$"
+letx db ?
 
 ;*  ---------------------------------- BARCOS --------------------------
 textoBoteneumatico          db "1. Bote Neumatico", "$"
@@ -67,7 +82,7 @@ textoAcorazado              db "4. Acorazado", "$"
 textoPortaviones            db "5. Portaviones", "$"
 limpiarbarcos               db "                     ","$"
 decorotexto1                db 219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,219,"$"
-dt2                         db 219,"$"
+dt2                         db 219
 borrarlinea             DB "                                        ",13
 textvertical            db "1-Vertical", "$"
 texthorizontal          db "2-Horizontal", "$"
@@ -86,7 +101,22 @@ POSXBARCOSELECCIONADO   DB ?
 POSYBARCOSELECCIONADO   DB ?
 ROTACIONBARCOSELECCIONADO   DB ?            ;! 1 vertical    2 horizontal
 
+NUMBARCOS1   DW ?
+NUMBARCOS2   DW ?
 FLAGPUEDOPONERBARCO     DB "1"
+
+arraybarco1x DB 5 dup("$")
+arraybarco1y DB 5 dup("$")
+arraybarco2x DB 5 dup("$")
+arraybarco2y DB 5 dup("$")
+arraybarco3x DB 5 dup("$")
+arraybarco3y DB 5 dup("$")
+arraybarco4x DB 5 dup("$")
+arraybarco4y DB 5 dup("$")
+arraybarco5x DB 5 dup("$")
+arraybarco5y DB 5 dup("$")
+temp1    DB "0"
+temp2    DB "0"
 ;* --------------------------  MATRICES DE LOS JUGADORES -----------------------------
 matriz1 DB 100 dup("0")  ;! PUEDE TENER  0   X   O
 matriz2 DB 100 dup('0')  ;! PUEDE TENER  0   X   O
@@ -109,6 +139,7 @@ NUMERONOVALIDO            db "Posicion mala", "$"
 ;* --------------------------  REPORTES -----------------------------
 Filenamejug1  db  "ESTADO_JUEGO_JUG1.htm", 0
 Filenamejug2  db  "ESTADO_JUEGO_JUG1.htm", 0
+texthtml        DB "DIV"
 ;* --------------------------  MIS_DATOS -----------------------------
 ;* --------------------------  MIS_DATOS -----------------------------
 temp DW  ?
@@ -251,6 +282,7 @@ KEY_PRESSED                     DB  ?
 
     ; * --------------------- IMPRIMIR BARCOS JUG 1---------------------
     PRINTSHIPS1 MACRO
+        
         STARTING:
             CMP barcos1[si], "1"
             JNE printvacio
@@ -395,15 +427,28 @@ KEY_PRESSED                     DB  ?
         ; POPA
     ENDM poscursor
 
-    decorobarra MACRO
-        CALL decorobarra_
-    ENDM decorobarra
+    ; decorobarra MACRO
+    ;     CALL decorobarra_
+    ; ENDM decorobarra
+    ; decorobarra2 MACRO
+    ;     CALL decorobarra2_
+    ; ENDM decorobarra2
 
     recorrerm1 MACRO
         PUSHA
         CALL recorrerm1_
         POPA
     ENDM recorrerm1
+    recorrerbarcos1 MACRO
+        PUSHA
+        CALL recorrerbarcos1_
+        POPA
+    ENDM recorrerbarcos1
+    recorrerm2 MACRO
+        PUSHA
+        CALL recorrerm2_
+        POPA
+    ENDM recorrerm2
 
                     ;! ▀▀▀▀▀▀▀▀▀▀  DISPAROS  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀
     DISPARAR MACRO
@@ -443,6 +488,17 @@ KEY_PRESSED                     DB  ?
         CALL pasarreadtextanumeroX_
         POPA
     ENDM pasarreadtextanumeroX
+    pasarreadtextanumeroBARCOY MACRO
+        PUSHA
+        CALL pasarreadtextanumeroBARCOY_
+        POPA
+    ENDM pasarreadtextanumeroBARCOY
+    pasarreadtextanumeroBARCOX MACRO
+        PUSHA
+        CALL pasarreadtextanumeroBARCOX_
+        POPA
+    ENDM pasarreadtextanumeroBARCOX
+
 
     BARCOQUEELIGIO MACRO
         PUSHA
@@ -455,8 +511,24 @@ KEY_PRESSED                     DB  ?
         CALL BARCOQUEELIGIO2_
         POPA
     ENDM BARCOQUEELIGIO2
-
-
+    VALIDARSHOOT MACRO
+        PUSHA
+        CALL VALIDARSHOOT_
+        POPA
+    ENDM VALIDARSHOOT
+    buscarbarco1 MACRO
+        PUSHA
+        CALL buscarbarco1_
+        POPA
+    ENDM buscarbarco1
+                 ;! ▀▀▀▀▀▀▀▀▀▀  REPORTES  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+    WriteHTM MACRO handler, buff, numbytes
+        MOV ah, 40h
+        MOV bx, handler
+        MOV cx, numbytes
+        lea dx, buff
+        int 21h
+    ENDM WriteHTM
     ; * ☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻ VISTA DE ENTRADA BARCOS ☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻
     PRINTVIEWSHIPS MACRO
         poscursor 1, 49
@@ -470,7 +542,8 @@ KEY_PRESSED                     DB  ?
         print decorotexto1
         poscursor 24,43
         print decorotexto1
-        decorobarra
+        ; decorobarra
+        ; decorobarra2
         ; ? *********  imprimo barcos disponibles
         poscursor 3,50                  ;* BARCO 1
         print textoBoteneumatico
@@ -488,7 +561,7 @@ KEY_PRESSED                     DB  ?
         poscursor 15, 63                ;* posiciono textos
         print textvertical
         poscursor 16, 63
-        print textvertical
+        print texthorizontal
         
         poscursor 18, 50                ;* IMPRIMO COORDENADAS XY
         print textuno
@@ -537,8 +610,210 @@ KEY_PRESSED                     DB  ?
         print ereigual
 
     ENDM PRINTVIEWSHIPS
+    PRINTVIEWSHIPS2 MACRO
+        poscursor 1, 49
+        print titlebarcosdisponibles
+        poscursor 13,44
+        print titleseleccionebarco
+        ;* texto decoracion
+        poscursor 0,43
+        print decorotexto1
+        poscursor 10,43
+        print decorotexto1
+        poscursor 24,43
+        print decorotexto1
+        ; decorobarra
+        ; decorobarra2
+        ; ? *********  imprimo barcos disponibles
+        poscursor 3,50                  ;* BARCO 1
+        print textoBoteneumatico
+        poscursor 4,50                  ;* BARCO 2
+        print textoDestructoramericano
+        poscursor 5,50                  ;* BARCO 3
+        print textoDestructorjapones
+        poscursor 6,50                  ;* BARCO 4
+        print textoAcorazado
+        poscursor 7,50                  ;* BARCO 5
+        print textoPortaviones
 
+        poscursor 12, 49
+        print titleingresebarcos
+        poscursor 15, 63                ;* posiciono textos
+        print textvertical
+        poscursor 16, 63
+        print texthorizontal
+        
+        poscursor 18, 50                ;* IMPRIMO COORDENADAS XY
+        print textuno
+        poscursor 18, 55
+        print textdos
+        poscursor 18, 60
+        print texttres
+        poscursor 18, 65
+        print textcuatro
+        poscursor 18, 70
+        print textcinco
 
+        poscursor 19, 49            ;!     X
+        print textekisigual
+        poscursor 20, 49            ;!     Y
+        print textyeigual
+        poscursor 21, 49
+        print ereigual
+
+        poscursor 19, 54
+        print textekisigual
+        poscursor 20, 54
+        print textyeigual
+        poscursor 21, 54
+        print ereigual
+
+        poscursor 19, 59
+        print textekisigual
+        poscursor 20, 59
+        print textyeigual
+        poscursor 21, 59
+        print ereigual
+
+        poscursor 19, 64
+        print textekisigual
+        poscursor 20, 64
+        print textyeigual
+        poscursor 21, 64
+        print ereigual
+
+        poscursor 19, 69
+        print textekisigual
+        poscursor 20, 69
+        print textyeigual
+        poscursor 21, 69
+        print ereigual
+
+    ENDM PRINTVIEWSHIPS2
+    
+    ; * ☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻ VISTA DE JUEGO JUGADOR 1 ☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻☻
+    PINTARVIEWJUGANDO MACRO
+        
+        poscursor 0, 33
+        print titledisparos
+        poscursor 11, 33
+        print titlebarcos
+        poscursor 1, 51
+        print textjuegobattleships
+        poscursor 3,49
+        print textbarcosvivos
+        poscursor 4,54
+        print textjugador1
+        poscursor 5,54
+        print textjugador2
+        ;* texto decoracion
+        poscursor 0,43
+        print decorotexto1
+        poscursor 10,43
+        print decorotexto1
+        poscursor 24,43
+        print decorotexto1
+        ; decorobarra
+        ; decorobarra2
+        ; ? *********  imprimo INGRESO DE COORDENADAS
+        poscursor 12,49                  ;* titulo
+        print titleingresodecoordenadas
+
+        poscursor 14, 53            ;!     X
+        print textekisigual
+        poscursor 15, 53            ;!     Y
+        print textyeigual
+
+    ENDM PINTARVIEWJUGANDO
+    pintarcoord MACRO
+        PUSHA
+        poscursor 22,1
+        mov dl, "1"
+        mov ah,2h
+        int 21h
+        poscursor 22,5
+        mov dl, "b"
+        mov ah,2h
+        int 21h
+        poscursor 22,9
+        mov dl, "3"
+        mov ah,2h
+        int 21h
+        poscursor 22,13
+        mov dl, "d"
+        mov ah,2h
+        int 21h
+        poscursor 22,17
+        mov dl, "5"
+        mov ah,2h
+        int 21h
+        poscursor 22,21
+        mov dl, "f"
+        mov ah,2h
+        int 21h
+        poscursor 22,25
+        mov dl, "7"
+        mov ah,2h
+        int 21h
+        poscursor 22,29
+        mov dl, "h"
+        mov ah,2h
+        int 21h
+        poscursor 22,33
+        mov dl, "9"
+        mov ah,2h
+        int 21h
+        poscursor 22,37
+        mov dl, "j"
+        mov ah,2h
+        int 21h
+
+        poscursor 12,41
+        mov dl, "a"
+        mov ah,2h
+        int 21h
+        poscursor 13,41
+        mov dl, "2"
+        mov ah,2h
+        int 21h
+        poscursor 14,41
+        mov dl, "c"
+        mov ah,2h
+        int 21h
+        poscursor 15,41
+        mov dl, "4"
+        mov ah,2h
+        int 21h
+        poscursor 16,41
+        mov dl, "e"
+        mov ah,2h
+        int 21h
+        poscursor 17,41
+        mov dl, "6"
+        mov ah,2h
+        int 21h
+        poscursor 18,41
+        mov dl, "g"
+        mov ah,2h
+        int 21h
+        poscursor 19,41
+        mov dl, "8"
+        mov ah,2h
+        int 21h
+        poscursor 20,41
+        mov dl, "i"
+        mov ah,2h
+        int 21h
+        poscursor 21,41
+        mov dl, "1"
+        mov ah,2h
+        int 21h
+        poscursor 21,42
+        mov dl, "0"
+        mov ah,2h
+        int 21h
+        POPA
+    ENDM pintarcoord
 ;! ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬      █▀▄▀█ ▄▀█ █ █▄░█       ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 ;! ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬      █░▀░█ █▀█ █ █░▀█       ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 main PROC FAR
@@ -550,7 +825,16 @@ main PROC FAR
     ;paint  0, 0, 800, 600, BLACK ;*LIMPIA TODO MODO VIDEO:V
     ;menu
     ;esperaenter
-    
+                            ; limpiar
+                            ; poscursor 14, 56
+                            ; readtext
+                            ; pasarreadtextanumeroX           ;? OBTENGO X
+                            ; poscursor 15, 56
+                            ; readtext
+                            ; pasarreadtextanumeroY           ;? OBTENGO Y
+                            ; shoot1 keypresstempX, keypresstempY
+                            ;     poscursor 2,12
+                            ;     recorrerm1
     limpiar  ;* limpio la pantalla
     poscursor 6,22
     print tm1c
@@ -561,19 +845,20 @@ main PROC FAR
     poscursor 12,22
     print tm4c
     poscursor 16,29
-    limpiar
+    ; limpiar
     readtext
-
-    readtext
-    recorrerm1
-    readtext
+    
+    ; readtext
+    ; recorrerm1
+    ; readtext
     OPCIONDEMENU
+    SALIDADEUNA:
     mov ax, 4c00h
     int 21h
     HLT ; para decirle al CPU que se estara ejecutando varias veces (detiene CPU hasta sig interrupcion)
     RET
 main    ENDP
-;! ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬ 
+;! ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 ;! ▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬▬
 ;? ☻ ===================== METODO MOSTRAR DATOS ======================= ☻
 misdatos_     PROC NEAR
@@ -668,6 +953,86 @@ readtext_ PROC NEAR
         inc si
         jmp Leer
     Salir:
+        ; ! ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░░ EN EL JUEGO  ░░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓
+        QUEINGRESO:
+                CMP keypress[0], "S"
+                JNE GUARDAR
+                JE ESS
+            ESS:
+                CMP keypress[1], "A"
+                JNE GUARDAR
+                JE ESA
+            ESA:
+                CMP keypress[2], "L"
+                JNE GUARDAR
+                JE ESL
+            ESL:
+                CMP keypress[3], "I"
+                JNE GUARDAR
+                JE ESIS
+            ESIS:
+                CMP keypress[4], "R"
+                JNE GUARDAR
+                JE SALIRAHORAYA
+        GUARDAR:
+                CMP keypress[0], "G"
+                JNE SHOWHTM
+                JE ESG2
+            ESG2:
+                CMP keypress[1], "U"
+                JNE SHOWHTM
+                JE ESU2
+            ESU2:
+                CMP keypress[2], "A"
+                JNE SHOWHTM
+                JE ESA21
+            ESA21:
+                CMP keypress[3], "R"
+                JNE SHOWHTM
+                JE ESR21
+            ESR21:
+                CMP keypress[4], "D"
+                JNE SHOWHTM
+                JE ESD2
+            ESD2:
+                CMP keypress[5], "A"
+                JNE SHOWHTM
+                JE ESA22
+            ESA22:
+                CMP keypress[6], "R"
+                JNE SHOWHTM
+                JE NOPASANADAOIGA  ;TODO: VER A DONDE VOY A GUARDAR
+        SHOWHTM:
+                CMP keypress[0], "S"
+                JNE NOPASANADAOIGA
+                JE ESS3
+            ESS3:
+                CMP keypress[1], "H"
+                JNE NOPASANADAOIGA
+                JE ESH3
+            ESH3:
+                CMP keypress[2], "O"
+                JNE NOPASANADAOIGA
+                JE ES03
+            ES03:
+                CMP keypress[3], "W"
+                JNE NOPASANADAOIGA
+                JE ESW3
+            ESW3:
+                CMP keypress[4], "H"
+                JNE NOPASANADAOIGA
+                JE ESH33
+            ESH33:
+                CMP keypress[5], "T"
+                JNE NOPASANADAOIGA
+                JE EST3
+            EST3:
+                CMP keypress[6], "M"
+                JNE SHOWHTM
+                JE NOPASANADAOIGA  ;TODO: VER A DONDE VOY A MOSTRAR EL HTML
+        SALIRAHORAYA:
+            ; JMP SALIDADEUNA
+    NOPASANADAOIGA:
     RET
 readtext_ ENDP
 
@@ -791,13 +1156,43 @@ PAINTTABLEROBARCOS2_ PROC NEAR
     RET
 PAINTTABLEROBARCOS2_ ENDP
 
+; decorobarra2_ PROC NEAR
+;     mov si, 00
+;     mov di, 00
+;     MOV INDEX, 0
+;     paintfila:
+;         cmp si, 24
+;         jne printelcuadro
+;         je exit
 
+;     printelcuadro:
+;         mov INDEXtemp, si
+;         poscursor si, 76
+;         print dt2
+;         INC si
+;         JMP paintfila
+;     exit:
+;     RET
+; decorobarra2_ ENDP
 
-decorobarra_ PROC NEAR
-    PR:
-    print dt2
-    RET
-decorobarra_ ENDP
+; decorobarra_ PROC NEAR
+;     mov si, 00
+;     mov di, 00
+;     MOV INDEX, 0
+;     paintfila:
+;         cmp si, 24
+;         jne printelcuadro
+;         je exit
+
+;     printelcuadro:
+;         mov INDEXtemp, si
+;         poscursor si, 43
+;         print dt2
+;         INC si
+;         JMP paintfila
+;     exit:
+;     RET
+; decorobarra_ ENDP
 
 
 ;?☻ ===================== OPCIONES DEL MENU ======================= ☻
@@ -849,9 +1244,6 @@ INICIODEJUEGOM_ PROC NEAR
         JNE INICIAELJUGADORUNO ; sino es 1 se va a JUGADOR 2
         JE INICIAELJUGADORUNO ; SI SI ES se va a JUGADOR 1
     INICIAELJUGADORUNO:
-        poscursor 10, 20  ;* MUESTRO TEXTO INICIO
-        print iniciaunotext
-        readtext
 
         limpiar
         poscursor 0,0
@@ -860,9 +1252,11 @@ INICIODEJUEGOM_ PROC NEAR
         print titledisparos
         poscursor 11, 33
         print titlebarcos
-
-        poscursor 12, 0
-        painttablero
+        pintarcoord
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS1
+        ; poscursor 2,0
+        ; recorrerm1
 
         PRINTVIEWSHIPS      ;* MOSTRAR VISTA PA PEDIR SHIPS
 
@@ -875,42 +1269,46 @@ INICIODEJUEGOM_ PROC NEAR
         readtext                ;? barco elegido guardado en keypress
 
         BARCOQUEELIGIO
-
+        
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS1
+        
         poscursor 15,51     ;! PIDO BARCO 2 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
         BARCOQUEELIGIO
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS1
 
         poscursor 15,51     ;! PIDO BARCO 3 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
         BARCOQUEELIGIO
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS1
 
         poscursor 15,51     ;! PIDO BARCO 4 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
         BARCOQUEELIGIO
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS1
 
         poscursor 15,51     ;! PIDO BARCO 5 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
         BARCOQUEELIGIO
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS1
 
-        ;? ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░░ INICIO TURNO ░░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓
-        limpiar
-        poscursor 10, 25
-        print textiniciandojuego
         readtext
         JMP PEDIRBARCOS2TEMP
     
     INICIAELJUGADORDOS:
-        poscursor 10, 20
-        print iniciadostext
-        readtext
 
         limpiar
         poscursor 0,0
@@ -919,123 +1317,283 @@ INICIODEJUEGOM_ PROC NEAR
         print titledisparos
         poscursor 11, 33
         print titlebarcos
+        pintarcoord
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS2
 
-        poscursor 12, 0
-        painttablero
-
-        PRINTVIEWSHIPS      ;* MOSTRAR VISTA PA PEDIR SHIPS
-
-        JMP PEDIRBARCOS1TEMP
+        PRINTVIEWSHIPS2      ;* MOSTRAR VISTA PA PEDIR SHIPS
+        readtext
+        JMP PEDIRBARCOS2
     PEDIRBARCOS1TEMP:
+        limpiar
+        poscursor 0,0
+        print jugandojugador1
+        poscursor 0, 33
+        print titledisparos
+        poscursor 11, 33
+        print titlebarcos
+        pintarcoord
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS1
+        PRINTVIEWSHIPS
         ;? ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░░ PIDO BARCOS ░░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓
         poscursor 15,51     ;! PIDO BARCO 1 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
-        BARCOQUEELIGIO2
+        BARCOQUEELIGIO
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS1
 
         poscursor 15,51     ;! PIDO BARCO 2 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
-        BARCOQUEELIGIO2
+        BARCOQUEELIGIO
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS1
 
         poscursor 15,51     ;! PIDO BARCO 3 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
-        BARCOQUEELIGIO2
+        BARCOQUEELIGIO
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS1
 
         poscursor 15,51     ;! PIDO BARCO 4 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
-        BARCOQUEELIGIO2
+        BARCOQUEELIGIO
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS1
 
         poscursor 15,51     ;! PIDO BARCO 5 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
-        BARCOQUEELIGIO2
-
+        BARCOQUEELIGIO
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS1
+        readtext
+        ;? ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░░ INICIO TURNO ░░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓
         limpiar
+        poscursor 10, 25
+        print textiniciandojuego
+        readtext
+        limpiar
+        poscursor 10, 20  ;* MUESTRO TEXTO INICIO
+        print iniciaunotext
+        readtext
         JMP TURNOJUGADORUNO
     PEDIRBARCOS2TEMP:
+        limpiar
+        poscursor 0,0
+        print jugandojugador2
+        poscursor 0, 33
+        print titledisparos
+        poscursor 11, 33
+        print titlebarcos
+        pintarcoord
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS2
+        PRINTVIEWSHIPS2
          ;? ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░░ PIDO BARCOS ░░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓
         poscursor 15,51     ;! PIDO BARCO 1 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
         BARCOQUEELIGIO2
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS2
 
         poscursor 15,51     ;! PIDO BARCO 2 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
         BARCOQUEELIGIO2
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS2
 
         poscursor 15,51     ;! PIDO BARCO 3 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
         BARCOQUEELIGIO2
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS2
 
         poscursor 15,51     ;! PIDO BARCO 4 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
         BARCOQUEELIGIO2
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS2
 
         poscursor 15,51     ;! PIDO BARCO 5 A POSICIONAR
         ; EL USUARIO ESCRIBE SU BARCO
         readtext                ;? barco elegido guardado en keypress
 
         BARCOQUEELIGIO2
-
-        limpiar
-        JMP TURNOJUGADORDOS
-    PEDIRBARCOS2:
-        ;? ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░░ PIDO BARCOS ░░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓
-        poscursor 15,51     ;! PIDO BARCO 1 A POSICIONAR
-        ; EL USUARIO ESCRIBE SU BARCO
-        readtext                ;? barco elegido guardado en keypress
-
-        BARCOQUEELIGIO2
-
-        poscursor 15,51     ;! PIDO BARCO 2 A POSICIONAR
-        ; EL USUARIO ESCRIBE SU BARCO
-        readtext                ;? barco elegido guardado en keypress
-
-        BARCOQUEELIGIO2
-
-        poscursor 15,51     ;! PIDO BARCO 3 A POSICIONAR
-        ; EL USUARIO ESCRIBE SU BARCO
-        readtext                ;? barco elegido guardado en keypress
-
-        BARCOQUEELIGIO2
-
-        poscursor 15,51     ;! PIDO BARCO 4 A POSICIONAR
-        ; EL USUARIO ESCRIBE SU BARCO
-        readtext                ;? barco elegido guardado en keypress
-
-        BARCOQUEELIGIO2
-
-        poscursor 15,51     ;! PIDO BARCO 5 A POSICIONAR
-        ; EL USUARIO ESCRIBE SU BARCO
-        readtext                ;? barco elegido guardado en keypress
-
-        BARCOQUEELIGIO2
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS2
+        readtext
 
         ;? ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░░ INICIO TURNO ░░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓
         limpiar
         poscursor 10, 25
         print textiniciandojuego
         readtext
+        
+        poscursor 10, 20
+        print iniciadostext
+        readtext
         JMP TURNOJUGADORDOS
+    PEDIRBARCOS2:
+        ; limpiar
+        ; PRINTVIEWSHIPS2
+        ; PAINTTABLEROBARCOS2
+        ;? ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░░ PIDO BARCOS ░░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓
+        poscursor 15,51     ;! PIDO BARCO 1 A POSICIONAR
+        ; EL USUARIO ESCRIBE SU BARCO
+        readtext                ;? barco elegido guardado en keypress
+
+        BARCOQUEELIGIO2
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS2
+
+        poscursor 15,51     ;! PIDO BARCO 2 A POSICIONAR
+        ; EL USUARIO ESCRIBE SU BARCO
+        readtext                ;? barco elegido guardado en keypress
+
+        BARCOQUEELIGIO2
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS2
+
+        poscursor 15,51     ;! PIDO BARCO 3 A POSICIONAR
+        ; EL USUARIO ESCRIBE SU BARCO
+        readtext                ;? barco elegido guardado en keypress
+
+        BARCOQUEELIGIO2
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS2
+
+        poscursor 15,51     ;! PIDO BARCO 4 A POSICIONAR
+        ; EL USUARIO ESCRIBE SU BARCO
+        readtext                ;? barco elegido guardado en keypress
+
+        BARCOQUEELIGIO2
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS2
+
+        poscursor 15,51     ;! PIDO BARCO 5 A POSICIONAR
+        ; EL USUARIO ESCRIBE SU BARCO
+        readtext                ;? barco elegido guardado en keypress
+
+        BARCOQUEELIGIO2
+        poscursor 12, 0            ;! imprimo tablero de barcos
+        PAINTTABLEROBARCOS2
+
+        readtext
+        JMP PEDIRBARCOS1TEMP
+    
     TURNOJUGADORDOS:
+        limpiar
+        poscursor 10, 20  ;* MUESTRO TEXTO INICIO
+        print titleturno2
+        readtext
+        limpiar
+        ;TODO: VALIDAR QUE NO HAYA GANADO BARCOS DISPONIBLES 1 = 0
+        CMP NUMBARCOS1, 1
+        JNE SIGOJUGANDO2
+        JE GANADOR1
+        SIGOJUGANDO2:
+            poscursor 0,0
+            print jugandojugador1
+            PINTARVIEWJUGANDO
+            ;! INGRESO DE COORDENADAS
+            poscursor 14,56
+            readtext
+            pasarreadtextanumeroX       ;? OBTENGO X
+            poscursor 15,56
+            readtext
+            pasarreadtextanumeroY          ;? OBTENGO Y
+            
+            poscursor 17,46
+            print textconfirmaeldisparo
+            poscursor 19,57
+            readtext
+            CMP keypress, "y"
+            JNE SIGOJUGANDO2
+            JE SIACEPTO2
+            SIACEPTO2:
+                shoot1 keypresstempX, keypresstempY
+                ;* LUEGO DE HACER DISPARO REFRESH LOS TABLEROS
+                ;! ACTUALIZAR TABLEROS Y BARCOS
+                poscursor 12, 0            ;! imprimo tablero de barcos
+                PAINTTABLEROBARCOS2
+                poscursor 1, 0
+                PAINTTABLEROSHOOTS2
+                ;TODO: posicionar barcos LAS CANTIDADES RESTANTES
+                readtext
+                JMP TURNOJUGADORUNO
+        GANADOR1:
+            limpiar
+            poscursor 10, 20  ;* MUESTRO TEXTO GANO
+            print titlegano1
+            readtext
 
+
+    ;!      IMPRIMO AMBOS TABLEROS DEL 2
     TURNOJUGADORUNO:
-
+        limpiar
+        poscursor 10, 20  ;* MUESTRO TEXTO INICIO
+        print titleturno1
+        readtext
+        limpiar
+        ;TODO: VALIDAR QUE NO HAYA GANADO BARCOS DISPONIBLES 1 = 0
+        CMP NUMBARCOS2, 1
+        JNE SIGOJUGANDO1
+        JE GANADOR2
+        SIGOJUGANDO1:
+            poscursor 0,0
+            print jugandojugador2
+            PINTARVIEWJUGANDO
+            ;! INGRESO DE COORDENADAS
+            ;************* obtengo valores X y Y
+            poscursor 14, 56
+            readtext
+            pasarreadtextanumeroX           ;? OBTENGO X
+            poscursor 15, 56
+            readtext
+            pasarreadtextanumeroY           ;? OBTENGO Y
+            ; shoot1 keypresstempX, keypresstempY                ;! DISPARO
+            poscursor 17,46
+            print textconfirmaeldisparo
+            poscursor 19,57
+            readtext
+            CMP keypress, "y"
+            JNE SIGOJUGANDO1
+            JE SIACEPTO1
+            SIACEPTO1:
+                shoot1 keypresstempX, keypresstempY
+                ;* LUEGO DE HACER DISPARO REFRESH LOS TABLEROS
+                ;! ACTUALIZAR TABLEROS Y BARCOS
+                poscursor 12, 0            ;! imprimo tablero de barcos
+                PAINTTABLEROBARCOS1
+                poscursor 1, 0
+                PAINTTABLEROSHOOTS1
+                ;TODO: posicionar barcos LAS CANTIDADES RESTANTES
+                readtext
+                JMP TURNOJUGADORDOS
+        GANADOR2:
+            limpiar
+            poscursor 10, 20  ;* MUESTRO TEXTO GANO
+            print titlegano2
+            readtext
+    
     RET
 INICIODEJUEGOM_ ENDP
 
@@ -1061,11 +1619,231 @@ shoot1_ PROC NEAR
     ; mov dl, si
     ; mov ah, 2h
     ; int 21h
-    Mov byte ptr matriz1[si], "1" ; finalmente movemos el dato.  Es importante lo de word ptr para indicar el tamaño
+    ;TODO: VALIDAR SI HAY BARCO EN POSICION
+    VALIDARSHOOT
+    ; Mov byte ptr matriz1[si], "1" ; finalmente movemos el dato.  Es importante lo de word ptr para indicar el tamaño
 
     RET
 shoot1_ ENDP
 
+buscarbarco1_ PROC NEAR
+    MOV temp1, "$"
+    MOV temp2, "$"
+
+    mov di, 00
+    S1:
+        cmp di, 5
+        jne S2
+        je sigobuscandox
+
+    S2:
+        MOV AL, shootjug1x
+        CMP arraybarco1x, AL
+        JE S3
+
+        INC di
+        JMP S1
+    S3:
+        mov temp1, "1"
+        JMP PASOAY
+
+
+    sigobuscandox:
+        mov di, 00
+        S4:
+            cmp di, 5
+            jne S5
+            je sigobuscandox1
+
+        S5:
+            MOV AL, shootjug1x
+            CMP arraybarco2x, AL
+            JE S6
+
+            INC di
+            JMP S4
+        S6:
+            mov temp1, "1"
+            JMP PASOAY
+
+
+    sigobuscandox1:
+        mov di, 00
+        S7:
+            cmp di, 5
+            jne S8
+            je sigobuscandox2
+
+        S8:
+            MOV AL, shootjug1x
+            CMP arraybarco3x, AL
+            JE S9
+
+            INC di
+            JMP S7
+        S9:
+            mov temp1, "1"
+            JMP PASOAY
+
+
+    sigobuscandox2:
+        mov di, 00
+        S10:
+            cmp di, 5
+            jne S11
+            je sigobuscandox3
+
+        S11:
+            MOV AL, shootjug1x
+            CMP arraybarco4x, AL
+            JE S12
+
+            INC di
+            JMP S10
+        S12:
+            mov temp1, "1"
+            JMP PASOAY
+
+    sigobuscandox3:
+        mov di, 00
+        S13:
+            cmp di, 5
+            jne S14
+            je SALIRDEAKI
+
+        S14:
+            MOV AL, shootjug1x
+            CMP arraybarco5x, AL
+            JE S15
+
+            INC di
+            JMP S13
+        S15:
+            mov temp1, "1"
+            JMP PASOAY
+
+    PASOAY:
+        mov di, 00
+        S1Y:
+            cmp di, 5
+            jne S2Y
+            je sigobuscandoY
+
+        S2Y:
+            MOV AL, shootjug1Y
+            CMP arraybarco1Y, AL
+            JE S3Y
+
+            INC di
+            JMP S1
+        S3Y:
+            mov temp2, "1"
+            JMP SALIRDEAKI
+
+
+        sigobuscandoY:
+            mov di, 00
+            S4Y:
+                cmp di, 5
+                jne S5Y
+                je sigobuscandoY1
+
+            S5Y:
+                MOV AL, shootjug1Y
+                CMP arraybarco2Y, AL
+                JE S6Y
+
+                INC di
+                JMP S4Y
+            S6Y:
+                mov temp2, "1"
+                JMP SALIRDEAKI
+
+
+        sigobuscandoY1:
+            mov di, 00
+            S7Y:
+                cmp di, 5
+                jne S8Y
+                je sigobuscandoY2
+
+            S8Y:
+                MOV AL, shootjug1Y
+                CMP arraybarco3Y, AL
+                JE S9Y
+
+                INC di
+                JMP S7Y
+            S9Y:
+                mov temp2, "1"
+                JMP SALIRDEAKI
+
+
+        sigobuscandoY2:
+            mov di, 00
+            S10Y:
+                cmp di, 5
+                jne S11Y
+                je sigobuscandoY3
+
+            S11Y:
+                MOV AL, shootjug1Y
+                CMP arraybarco4Y, AL
+                JE S12Y
+
+                INC di
+                JMP S10Y
+            S12Y:
+                mov temp2, "1"
+                JMP SALIRDEAKI
+
+        sigobuscandoY3:
+            mov di, 00
+            S13Y:
+                cmp di, 5
+                jne S14Y
+                je SALIRDEAKI
+
+            S14Y:
+                MOV AL, shootjug1Y
+                CMP arraybarco5Y, AL
+                JE S15Y
+
+                INC di
+                JMP S13Y
+            S15Y:
+                mov temp2, "1"
+                JMP SALIRDEAKI
+
+
+    SALIRDEAKI:
+    RET
+buscarbarco1_ ENDP
+
+VALIDARSHOOT_ PROC NEAR
+
+    ;! SI ESTA EN ALGUN ARRAY DE COORDENADAS ENTONCES
+    buscarbarco1
+    CMP temp1, "1"
+    JNE NELPRRO
+    JE SIHAYX
+    SIHAYX:
+        CMP temp2, "1"
+        JNE NELPRRO
+        JE SIHAYY
+        SIHAYY:
+            DEC NUMBARCOS1    ;? DISMINUYO CANTIDAD DE BARCOS DE JUGAADOR
+            Mov byte ptr matriz1[si], "X"
+            Mov byte ptr barcos1[si], "X"
+            JMP SALTEPRRO
+            ; ! eliminar toda la lista de coordenadas de ese barco
+
+    ;! SINO ESTA EN NINGUNA LISTA ENTONCES
+    NELPRRO:
+        Mov byte ptr matriz1[si], "O"
+    SALTEPRRO:
+    RET
+VALIDARSHOOT_ ENDP
 ;?☻ ===================== HACER DISPARO JUG 2 ======================= ☻
 shoot2_ PROC NEAR
     ;! HACER EL DISPARO EN POSICION AL = Y     AX = X
@@ -1151,13 +1929,14 @@ pasarreadtextanumeroY_ PROC NEAR
         JNE NOESDIEZ
         JE ESDIEZTEMP
         ESDIEZTEMP:
-            CMP keypress[0], "0"
+            CMP keypress[1], "0"
             JNE NOESDIEZ
             JE SIESDIEZ
     SIESDIEZ:
         mov keypresstempY,9
         JMP SALIR
     NOESDIEZ:
+        poscursor 23,10
         print NUMERONOVALIDO
         readtext
         JMP INICIO
@@ -1237,12 +2016,177 @@ pasarreadtextanumeroX_ PROC NEAR
         mov keypresstempX,9
         JMP SALIR
     NOESDIEZ:
+        poscursor 23,10
         print NUMERONOVALIDO
         readtext
         JMP INICIO
     SALIR:
     RET
 pasarreadtextanumeroX_ ENDP
+
+pasarreadtextanumeroBARCOY_ PROC NEAR
+    INICIO:
+        CMP keypress, "a"
+        JNE NOESUNO
+        JE SIESUNO
+    SIESUNO:
+        mov POSYBARCOSELECCIONADO,0
+        JMP SALIR
+    NOESUNO:
+        CMP keypress, "2"
+        JNE NOESDOS
+        JE SIESDOS
+    SIESDOS:
+        mov POSYBARCOSELECCIONADO,1
+        JMP SALIR
+    NOESDOS:
+        CMP keypress, "c"
+        JNE NOESTRES
+        JE SIESTRES
+    SIESTRES:
+        mov POSYBARCOSELECCIONADO,2
+        JMP SALIR
+    NOESTRES:
+        CMP keypress, "4"
+        JNE NOESCUATRO
+        JE SIESCUATRO
+    SIESCUATRO:
+        mov POSYBARCOSELECCIONADO,3
+        JMP SALIR
+    NOESCUATRO:
+        CMP keypress, "e"
+        JNE NOESCINCO
+        JE SIESCINCO
+    SIESCINCO:
+        mov POSYBARCOSELECCIONADO,4
+        JMP SALIR
+    NOESCINCO:
+        CMP keypress, "6"
+        JNE NOESSEIS
+        JE SIESSEIS
+    SIESSEIS:
+        mov POSYBARCOSELECCIONADO,5
+        JMP SALIR
+    NOESSEIS:
+        CMP keypress, "g"
+        JNE NOESSIETE
+        JE SIESSIETE
+    SIESSIETE:
+        mov POSYBARCOSELECCIONADO,6
+        JMP SALIR
+    NOESSIETE:
+        CMP keypress, "8"
+        JNE NOESOCHO
+        JE SIESOCHO
+    SIESOCHO:
+        mov POSYBARCOSELECCIONADO,7
+        JMP SALIR
+    NOESOCHO:
+        CMP keypress, "i"
+        JNE NOESNUEVE
+        JE SIESNUEVE
+    SIESNUEVE:
+        mov POSYBARCOSELECCIONADO,8
+        JMP SALIR
+    NOESNUEVE:
+        CMP keypress[0], "1"
+        JNE NOESDIEZ
+        JE ESDIEZTEMP
+        ESDIEZTEMP:
+            CMP keypress[1], "0"
+            JNE NOESDIEZ
+            JE SIESDIEZ
+    SIESDIEZ:
+        mov POSYBARCOSELECCIONADO,9
+        JMP SALIR
+    NOESDIEZ:
+        poscursor 23,10
+        print NUMERONOVALIDO
+        readtext
+        JMP INICIO
+    SALIR:
+    RET
+pasarreadtextanumeroBARCOY_ ENDP
+
+pasarreadtextanumeroBARCOX_ PROC NEAR
+    INICIO:
+        CMP keypress, "1"
+        JNE NOESUNO
+        JE SIESUNO
+    SIESUNO:
+        mov POSXBARCOSELECCIONADO,0
+        JMP SALIR
+    NOESUNO:
+        CMP keypress, "b"
+        JNE NOESDOS
+        JE SIESDOS
+    SIESDOS:
+        mov POSXBARCOSELECCIONADO,1
+        JMP SALIR
+    NOESDOS:
+        CMP keypress, "3"
+        JNE NOESTRES
+        JE SIESTRES
+    SIESTRES:
+        mov POSXBARCOSELECCIONADO,2
+        JMP SALIR
+    NOESTRES:
+        CMP keypress, "d"
+        JNE NOESCUATRO
+        JE SIESCUATRO
+    SIESCUATRO:
+        mov POSXBARCOSELECCIONADO,3
+        JMP SALIR
+    NOESCUATRO:
+        CMP keypress, "5"
+        JNE NOESCINCO
+        JE SIESCINCO
+    SIESCINCO:
+        mov POSXBARCOSELECCIONADO,4
+        JMP SALIR
+    NOESCINCO:
+        CMP keypress, "f"
+        JNE NOESSEIS
+        JE SIESSEIS
+    SIESSEIS:
+        mov POSXBARCOSELECCIONADO,5
+        JMP SALIR
+    NOESSEIS:
+        CMP keypress, "7"
+        JNE NOESSIETE
+        JE SIESSIETE
+    SIESSIETE:
+        mov POSXBARCOSELECCIONADO,6
+        JMP SALIR
+    NOESSIETE:
+        CMP keypress, "h"
+        JNE NOESOCHO
+        JE SIESOCHO
+    SIESOCHO:
+        mov POSXBARCOSELECCIONADO,7
+        JMP SALIR
+    NOESOCHO:
+        CMP keypress, "9"
+        JNE NOESNUEVE
+        JE SIESNUEVE
+    SIESNUEVE:
+        mov POSXBARCOSELECCIONADO,8
+        JMP SALIR
+    NOESNUEVE:
+        CMP keypress, "j"
+        JNE NOESDIEZ
+        JE SIESDIEZ
+    SIESDIEZ:
+        mov POSXBARCOSELECCIONADO,9
+        JMP SALIR
+    NOESDIEZ:
+        poscursor 23,10
+        print NUMERONOVALIDO
+        readtext
+        JMP INICIO
+    SALIR:
+    RET
+pasarreadtextanumeroBARCOX_ ENDP
 
 ;?☻ ===================== REALIZAR EL DISPARO ======================= ☻
 DISPARAR_ PROC NEAR
@@ -1255,6 +2199,11 @@ DISPARAR_ PROC NEAR
     RET
 DISPARAR_ ENDP
 
+HACERDISPAROJUG1_ PROC NEAR
+HACERDISPAROJUG1_ ENDP
+
+HACERDISPAROJUG2_ PROC NEAR
+HACERDISPAROJUG2_ ENDP
 ;?☻ ===================== ELECCION DE BARCO JUGADOR 1======================= ☻
 BARCOQUEELIGIO_ PROC NEAR
     CUALELIGIO:
@@ -1268,12 +2217,10 @@ BARCOQUEELIGIO_ PROC NEAR
     SIUNO:                      ;! SI ES 1
         poscursor 19,51 ;X
         readtext
-        MOV AL, keypress
-        MOV POSXBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOX
         poscursor 20,51 ;Y
         readtext
-        MOV AL, keypress
-        MOV POSYBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOY
         poscursor 21,51 ;R
         readtext
         MOV AL, keypress
@@ -1287,6 +2234,8 @@ BARCOQUEELIGIO_ PROC NEAR
         print textyahaybarcoalli
         JMP SIUNO
     PUEDOPONERBARQUITO1:
+        ; poscursor 2,11
+        ; recorrerm2
         COLOCARBARCO1
         JMP SALIR
     
@@ -1297,12 +2246,10 @@ BARCOQUEELIGIO_ PROC NEAR
     SIDOS:                      ;! SI ES 2
         poscursor 19,56 ;X
         readtext
-        MOV AL, keypress
-        MOV POSXBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOX
         poscursor 20,56 ;Y
         readtext
-        MOV AL, keypress
-        MOV POSYBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOY
         poscursor 21,56 ;R
         readtext
         MOV AL, keypress
@@ -1326,12 +2273,10 @@ BARCOQUEELIGIO_ PROC NEAR
     SITRES:                      ;! SI ES 3
         poscursor 19,61 ;X
         readtext
-        MOV AL, keypress
-        MOV POSXBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOX
         poscursor 20,61 ;Y
         readtext
-        MOV AL, keypress
-        MOV POSYBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOY
         poscursor 21,61 ;R
         readtext
         MOV AL, keypress
@@ -1355,12 +2300,10 @@ BARCOQUEELIGIO_ PROC NEAR
     SICUATRO:                      ;! SI ES 4
         poscursor 19,66 ;X
         readtext
-        MOV AL, keypress
-        MOV POSXBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOX
         poscursor 20,66 ;Y
         readtext
-        MOV AL, keypress
-        MOV POSYBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOY
         poscursor 21,66 ;R
         readtext
         MOV AL, keypress
@@ -1379,12 +2322,10 @@ BARCOQUEELIGIO_ PROC NEAR
     SICINCO:                      ;! SI ES 5
         poscursor 19,71 ;X
         readtext
-        MOV AL, keypress
-        MOV POSXBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOX
         poscursor 20,71 ;Y
         readtext
-        MOV AL, keypress
-        MOV POSYBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOY
         poscursor 21,71 ;R
         readtext
         MOV AL, keypress
@@ -1419,17 +2360,15 @@ BARCOQUEELIGIO2_ PROC NEAR
     SIUNO:                      ;! SI ES 1
         poscursor 19,51 ;X
         readtext
-        MOV AL, keypress
-        MOV POSXBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOX
         poscursor 20,51 ;Y
         readtext
-        MOV AL, keypress
-        MOV POSYBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOY
         poscursor 21,51 ;R
         readtext
         MOV AL, keypress
         MOV ROTACIONBARCOSELECCIONADO, AL
-        VALIDARESPACIO
+        VALIDARESPACIO2
         CMP FLAGPUEDOPONERBARCO, "0"
         JNE PUEDOPONERBARQUITO1
         JE NOPUEDOPONERBARQUITO1
@@ -1448,17 +2387,15 @@ BARCOQUEELIGIO2_ PROC NEAR
     SIDOS:                      ;! SI ES 2
         poscursor 19,56 ;X
         readtext
-        MOV AL, keypress
-        MOV POSXBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOX
         poscursor 20,56 ;Y
         readtext
-        MOV AL, keypress
-        MOV POSYBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOY
         poscursor 21,56 ;R
         readtext
         MOV AL, keypress
         MOV ROTACIONBARCOSELECCIONADO, AL
-        VALIDARESPACIO
+        VALIDARESPACIO2
         CMP FLAGPUEDOPONERBARCO, "0"
         JNE PUEDOPONERBARQUITO2
         JE NOPUEDOPONERBARQUITO2
@@ -1477,17 +2414,15 @@ BARCOQUEELIGIO2_ PROC NEAR
     SITRES:                      ;! SI ES 3
         poscursor 19,61 ;X
         readtext
-        MOV AL, keypress
-        MOV POSXBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOX
         poscursor 20,61 ;Y
         readtext
-        MOV AL, keypress
-        MOV POSYBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOY
         poscursor 21,61 ;R
         readtext
         MOV AL, keypress
         MOV ROTACIONBARCOSELECCIONADO, AL
-        VALIDARESPACIO
+        VALIDARESPACIO2
         CMP FLAGPUEDOPONERBARCO, "0"
         JNE PUEDOPONERBARQUITO3
         JE NOPUEDOPONERBARQUITO3
@@ -1506,17 +2441,15 @@ BARCOQUEELIGIO2_ PROC NEAR
     SICUATRO:                      ;! SI ES 4
         poscursor 19,66 ;X
         readtext
-        MOV AL, keypress
-        MOV POSXBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOX
         poscursor 20,66 ;Y
         readtext
-        MOV AL, keypress
-        MOV POSYBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOY
         poscursor 21,66 ;R
         readtext
         MOV AL, keypress
         MOV ROTACIONBARCOSELECCIONADO, AL
-        VALIDARESPACIO
+        VALIDARESPACIO2
         CMP FLAGPUEDOPONERBARCO, "0"
         JNE PUEDOPONERBARQUITO4
         JE NOPUEDOPONERBARQUITO4
@@ -1530,17 +2463,15 @@ BARCOQUEELIGIO2_ PROC NEAR
     SICINCO:                      ;! SI ES 5
         poscursor 19,71 ;X
         readtext
-        MOV AL, keypress
-        MOV POSXBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOX
         poscursor 20,71 ;Y
         readtext
-        MOV AL, keypress
-        MOV POSYBARCOSELECCIONADO, AL
+        pasarreadtextanumeroBARCOY
         poscursor 21,71 ;R
         readtext
         MOV AL, keypress
         MOV ROTACIONBARCOSELECCIONADO, AL
-        VALIDARESPACIO
+        VALIDARESPACIO2
         CMP FLAGPUEDOPONERBARCO, "0"
         JNE PUEDOPONERBARQUITO5
         JE NOPUEDOPONERBARQUITO5
@@ -1606,6 +2537,10 @@ COLOCARBARCO1_ PROC NEAR
         JNE ESHORIZONTAL
         JE ESVERTICAL
     ESHORIZONTAL:                               ;! ████
+        ; poscursor 5,20
+        ; mov dl, POSYBARCOSELECCIONADO                                             ;TODO:
+        ; mov ah, 2h
+        ; int 21h
         mov al, POSYBARCOSELECCIONADO
         mov bl, 10
         mul bl
@@ -1613,6 +2548,8 @@ COLOCARBARCO1_ PROC NEAR
         add ax, bx
         mov si, ax
         Mov byte ptr barcos1[si], "1"
+
+        
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
 
@@ -1634,7 +2571,8 @@ COLOCARBARCO1_ PROC NEAR
         Mov byte ptr barcos1[si], "1"
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
-        
+        ; poscursor 2,11
+        ; recorrerm2
         mov al, POSYBARCOSELECCIONADO
         mov bl, 10
         mul bl
@@ -1642,6 +2580,8 @@ COLOCARBARCO1_ PROC NEAR
         add ax, bx
         mov si, ax
         Mov byte ptr barcos1[si], "1"
+
+        
         JMP SALIR
     SALIR:
     RET
@@ -1885,7 +2825,7 @@ COLOCARBARCO4_ PROC NEAR
 COLOCARBARCO4_ ENDP
 
 
- PROC NEAR
+COLOCARBARCO5_ PROC NEAR
     VERROTACION:
         CMP ROTACIONBARCOSELECCIONADO, "1"
         JNE ESHORIZONTAL
@@ -1943,16 +2883,6 @@ COLOCARBARCO4_ ENDP
         mov si, ax
         Mov byte ptr barcos1[si], "1"
 
-        ;* sumo 1 a la posicion X
-        ADD POSXBARCOSELECCIONADO,1
-
-        mov al, POSYBARCOSELECCIONADO
-        mov bl, 10
-        mul bl
-        movzx bx, POSXBARCOSELECCIONADO
-        add ax, bx
-        mov si, ax
-        Mov byte ptr barcos1[si], "1"
         JMP SALIR
     ESVERTICAL:                                 ;! ██
         mov al, POSYBARCOSELECCIONADO           ;! ██
@@ -2455,7 +3385,72 @@ recorrerm1_ PROC NEAR
     exit:
     RET
 recorrerm1_ ENDP
+;?☻ ===================== RECORRER MATRIZ 2 ======================= ☻
+recorrerbarcos1_ PROC NEAR
+    mov si, 00
+    mov di, 00
+    MOV INDEX, 0
+    paintfila:
+        cmp si, 10
+        jne printelcuadro
+        je imprimirsaltolinea
 
+    printelcuadro:
+        mov INDEXtemp, si
+
+        mov si, INDEX           ;* mostrar lo que hay en la matriz
+        mov dl, barcos1[si]
+        mov ah, 2h
+        int 21h
+        mov si, INDEXtemp
+
+        INC si
+        INC index      ;* AUMENTO EL INDICE PRINCIPAL
+        JMP paintfila
+
+    imprimirsaltolinea:
+        mov si, 00
+        INC di
+        print saltolinea
+        cmp di, 10
+        jne printelcuadro
+        je exit
+    exit:
+    RET
+recorrerbarcos1_ ENDP
+;?☻ ===================== RECORRER MATRIZ 2 ======================= ☻
+recorrerm2_ PROC NEAR
+    mov si, 00
+    mov di, 00
+    MOV INDEX, 0
+    paintfila:
+        cmp si, 10
+        jne printelcuadro
+        je imprimirsaltolinea
+
+    printelcuadro:
+        mov INDEXtemp, si
+
+        mov si, INDEX           ;* mostrar lo que hay en la matriz
+        mov dl, matriz2[si]
+        mov ah, 2h
+        int 21h
+        mov si, INDEXtemp
+
+        INC si
+        INC index      ;* AUMENTO EL INDICE PRINCIPAL
+        JMP paintfila
+
+    imprimirsaltolinea:
+        mov si, 00
+        INC di
+        print saltolinea
+        cmp di, 10
+        jne printelcuadro
+        je exit
+    exit:
+    RET
+recorrerm2_ ENDP
 end     MAIN
 
 ;*  ░█████╗░██╗░░░░░██╗░░░██╗░█████╗░██████╗░░█████╗░    ░██████╗░█████╗░░█████╗░░█████╗░██████╗░
