@@ -2835,10 +2835,17 @@ COLOCARBARCO5_ PROC NEAR
         mov bl, 10
         mul bl
         movzx bx, POSXBARCOSELECCIONADO
+        mov ah, POSXBARCOSELECCIONADO
         add ax, bx
         mov si, ax
         Mov byte ptr barcos1[si], "1"
-
+        
+        
+        mov arraybarco5x[0],ah
+        MOV arraybarco5y[0],al
+        poscursor 5,5
+        
+        readtext
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
 
@@ -2850,6 +2857,9 @@ COLOCARBARCO5_ PROC NEAR
         mov si, ax
         Mov byte ptr barcos1[si], "1"
 
+        mov ah, POSXBARCOSELECCIONADO
+        mov arraybarco5x[1],ah
+        MOV arraybarco5y[1],al
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
 
@@ -2861,6 +2871,9 @@ COLOCARBARCO5_ PROC NEAR
         mov si, ax
         Mov byte ptr barcos1[si], "1"
 
+        mov ah, POSXBARCOSELECCIONADO
+        mov arraybarco5x[2],ah
+        MOV arraybarco5y[2],al
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
 
@@ -2872,6 +2885,9 @@ COLOCARBARCO5_ PROC NEAR
         mov si, ax
         Mov byte ptr barcos1[si], "1"
 
+        mov ah, POSXBARCOSELECCIONADO
+        mov arraybarco5x[3],ah
+        MOV arraybarco5y[3],al
         ;* sumo 1 a la posicion X
         ADD POSXBARCOSELECCIONADO,1
 
@@ -2882,6 +2898,9 @@ COLOCARBARCO5_ PROC NEAR
         add ax, bx
         mov si, ax
         Mov byte ptr barcos1[si], "1"
+        mov ah, POSXBARCOSELECCIONADO
+        mov arraybarco5x[4],ah
+        MOV arraybarco5y[4],al
 
         JMP SALIR
     ESVERTICAL:                                 ;! ██
@@ -2893,6 +2912,9 @@ COLOCARBARCO5_ PROC NEAR
         mov si, ax
         Mov byte ptr barcos1[si], "1"
 
+        mov ah, POSXBARCOSELECCIONADO
+        mov arraybarco5x[0],ah
+        MOV arraybarco5y[0],al
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
         
@@ -2904,6 +2926,9 @@ COLOCARBARCO5_ PROC NEAR
         mov si, ax
         Mov byte ptr barcos1[si], "1"
 
+        mov ah, POSXBARCOSELECCIONADO
+        mov arraybarco5x[1],ah
+        MOV arraybarco5y[1],al
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
         
@@ -2915,6 +2940,9 @@ COLOCARBARCO5_ PROC NEAR
         mov si, ax
         Mov byte ptr barcos1[si], "1"
 
+        mov ah, POSXBARCOSELECCIONADO
+        mov arraybarco5x[2],ah
+        MOV arraybarco5y[2],al
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
         
@@ -2926,6 +2954,9 @@ COLOCARBARCO5_ PROC NEAR
         mov si, ax
         Mov byte ptr barcos1[si], "1"
 
+        mov ah, POSXBARCOSELECCIONADO
+        mov arraybarco5x[3],ah
+        MOV arraybarco5y[3],al
         ;* sumo 1 a la posicion X
         ADD POSYBARCOSELECCIONADO,1
         
@@ -2936,6 +2967,9 @@ COLOCARBARCO5_ PROC NEAR
         add ax, bx
         mov si, ax
         Mov byte ptr barcos1[si], "1"
+        mov ah, POSXBARCOSELECCIONADO
+        mov arraybarco5x[4],ah
+        MOV arraybarco5y[4],al
         JMP SALIR
     SALIR:
     RET
