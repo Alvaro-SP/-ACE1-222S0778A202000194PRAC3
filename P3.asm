@@ -167,23 +167,31 @@ PERDEDOR        db "PERDEDOR:", "$"
 LBLJUGADOR1     db "JUGADOR 1", "$"
 LBLJUGADOR2     db "JUGADOR 2", "$"
 DISPAROSTOTALES        db "DISPAROS TOTALES:", "$"
-DISPAROSTOTALES        db "DISPAROS IMPACTADOS:", "$"
-DISPAROSTOTALES        db "DISPAROS FALLIDOS:", "$"
-DISPAROSTOTALES        db "BARCOS VIVOS:", "$"
+DISPAROSIMPACTADOS        db "DISPAROS IMPACTADOS:", "$"
+DISPAROSFALLIDOS        db "DISPAROS FALLIDOS:", "$"
+BARCOSVIVOS        db "BARCOS VIVOS:", "$"
 
 ;* --------------------------  REPORTE HTML -----------------------------
-HEADHTM     db '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>CodePen - &lt;Table&gt; Responsive</title><link rel="stylesheet" href="./style.css"></head><body><h1><span class="blue">&lt;</span>ESTADO ACTUAL<span class="blue">&gt;</span><span class="yellow"> JUEGO BATTLESHIPS</pan></h1><h2>-------ETIQUETA TEMPORAL: $'
-
+; HEADHTM     db '<!DOCTYPE html><html lang="en" ><head><meta charset="UTF-8"><title>CodePen - &lt;Table&gt; Responsive</title><link rel="stylesheet" href="./style.css"></head><body><h1><span class="blue">&lt;</span>ESTADO ACTUAL<span class="blue">&gt;</span><span class="yellow"> JUEGO BATTLESHIPS</pan></h1><h2>-------ETIQUETA TEMPORAL: $'
 TXTLABELTOTALHTM        db "<h3>TOTAL DE DISPAROS: ", "$"
 TXTLABELTEMPORALFALLIDOSHTM     db "<h3>DISPAROS FALLIDOS: ", "$"
 TXTLABELTEMPORALACERTADOSHTM     db "<h3>DISPAROS ACERTADOS:", "$"
-TXTLLENOHTM     db "<td style="background-color: rgb(7, 48, 255);"></td>$'
+TXTLLENOHTM     db '<td style="background-color: blue;" ></td>$'
 TXT_X_HTM     db "<td>X</td>", "$"
 TXT_O_HTM     db "<td>O</td>", "$"
 TRHTM           DB '<tr>$'
-TXTLABELTITULOJUGADOR           DB "<h2>  <a href="https://github.com/Alvaro-SP" target="_blank">DISPAROS JUGADOR</a></h2><table class="container"><tbody>,"$"
-TXTLABELTITULOBARCOS            DB "</table><h2>  <a href="https://github.com/Alvaro-SP" target="_blank">BARCOS JUGADOR</a></h2><table class="container"><tbody>"
+TXTLABELTITULOJUGADOR           DB '<h2>  <a href="https://github.com/Alvaro-SP" >DISPAROS JUGADOR</a></h2><table class="container"><tbody>$'
+TXTLABELTITULOBARCOS            DB '</table><h2>  <a href="https://github.com/Alvaro-SP" target="_blank">BARCOS JUGADOR</a></h2><table class="container"><tbody>'
 FINHTM                          DB '</table><script  src="./script.js"></script></body></html>$'
+
+buffInfo db 40000 dup('$')
+buffInfo1 db 40000 dup('$')
+
+
+
+
+
+
 
 temp DW  ?
 KEY_PRESSED                     DB  ?
@@ -616,6 +624,19 @@ KEY_PRESSED                     DB  ?
         POPA
     ENDM llenararrays3
                  ;! ▀▀▀▀▀▀▀▀▀▀  REPORTES  ▀▀▀▀▀▀▀▀▀▀▀▀▀▀
+    concatenarHTML macro destino, fuente
+        xor di, di
+        LeerCaracter:
+            mov al, fuente[di]
+            cmp al, 36
+                je FinCadena
+            mov destino[si], al
+            inc si
+            inc di
+            jmp LeerCaracter        
+        FinCadena:
+    endm
+    
     WriteHTM MACRO handler, buff, numbytes
         MOV ah, 40h
         MOV bx, handler
@@ -914,11 +935,11 @@ main PROC FAR
     MOV AX, @DATA
     MOV DS, AX
     MOV ES, AX
-    ;misdatos
-    ;esperaenter
-    ;paint  0, 0, 800, 600, BLACK ;*LIMPIA TODO MODO VIDEO:V
-    ;menu
-    ;esperaenter
+    misdatos
+    esperaenter
+    paint  0, 0, 800, 600, BLACK ;*LIMPIA TODO MODO VIDEO:V
+    menu
+    esperaenter
                             ; limpiar
                             ; poscursor 14, 56
                             ; readtext
@@ -929,47 +950,47 @@ main PROC FAR
                             ; shoot1 keypresstempX, keypresstempY
                             ;     poscursor 2,12
                             ;     recorrerm1
-    OTRAVEZ:
-    limpiar  ;* limpio la pantalla
+    ; OTRAVEZ:
+    ; limpiar  ;* limpio la pantalla
 
-            ; readtext
-            ; ;? ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░░ PIDO BARCOS ░░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓
-            poscursor 15,51     ;! PIDO BARCO 1 A POSICIONAR
-            ; EL USUARIO ESCRIBE SU BARCO
-            readtext                ;? barco elegido guardado en keypress
+    ;         ; readtext
+    ;         ; ;? ▓▓▓▓▓▓▓▓▓▓▓▓▒▒▒▒▒▒▒▒░░░░░░░░░ PIDO BARCOS ░░░░░░░░░▒▒▒▒▒▒▒▒▓▓▓▓▓▓▓▓▓▓▓▓
+    ;         poscursor 15,51     ;! PIDO BARCO 1 A POSICIONAR
+    ;         ; EL USUARIO ESCRIBE SU BARCO
+    ;         readtext                ;? barco elegido guardado en keypress
 
-            BARCOQUEELIGIO
-            MOSTRARVAC
-            MOSTRARVAC2
-            readtext
+    ;         BARCOQUEELIGIO
+    ;         MOSTRARVAC
+    ;         MOSTRARVAC2
+    ;         readtext
             
-            ; ;************* obtengo valores X y Y
-            poscursor 14, 56
-            readtext
-            pasarreadtextanumeroX           ;? OBTENGO X
-            poscursor 15, 56
-            readtext
-            pasarreadtextanumeroY           ;? OBTENGO Y
+    ;         ; ;************* obtengo valores X y Y
+    ;         poscursor 14, 56
+    ;         readtext
+    ;         pasarreadtextanumeroX           ;? OBTENGO X
+    ;         poscursor 15, 56
+    ;         readtext
+    ;         pasarreadtextanumeroY           ;? OBTENGO Y
 
-            
-            
-            shoot1 keypresstempX, keypresstempY
             
             
-                readtext
+    ;         shoot1 keypresstempX, keypresstempY
+            
+            
+    ;             readtext
 
 
-            poscursor 12, 0            ;! imprimo tablero de barcos
-            PAINTTABLEROBARCOS1 ;!barcos1
-            poscursor 1, 0
-            PAINTTABLEROSHOOTS1 ;! matriz1
-            readtext
-            poscursor 12, 0            ;! imprimo tablero de barcos
-            PAINTTABLEROBARCOS1;!barcos1
-            poscursor 1, 0
-            PAINTTABLEROSHOOTS1 ;! matriz1
-            readtext
-            JMP OTRAVEZ
+    ;         poscursor 12, 0            ;! imprimo tablero de barcos
+    ;         PAINTTABLEROBARCOS1 ;!barcos1
+    ;         poscursor 1, 0
+    ;         PAINTTABLEROSHOOTS1 ;! matriz1
+    ;         readtext
+    ;         poscursor 12, 0            ;! imprimo tablero de barcos
+    ;         PAINTTABLEROBARCOS1;!barcos1
+    ;         poscursor 1, 0
+    ;         PAINTTABLEROSHOOTS1 ;! matriz1
+    ;         readtext
+    ;         JMP OTRAVEZ
     limpiar
     poscursor 6,22
     print tm1c
