@@ -1,3 +1,194 @@
+<p>UNIVERSIDAD DE SAN CARLOS DE GUATEMALA</p>
+<p>FACULTAD DE INGENIERIA</p>
+<p>ESCUELA DE CIENCIAS Y SISTEMAS</p>
+<p>LABORATORIO DE ARQUITECTURA DE COMPUTADORES Y ENSAMBLADORES 1</p>
+<p>SEGUNDO SEMESTRE 2022</p>
+<p>ING. OTTO RENE ESCOBAR LEIVA</p>
+<p>TUTOR ACADEMICO SECCION A. OSCAR PERALTA</p>
+
+---
+
+
+---
+
+
+---
+
+
+---
+
+
+---
+
+
+---
+
+
+---
+
+<center> <h1>PRACTICA #3</h1> </center>
+<center> <h1>JUEGO BATTLESHIP</h1> </center>
+
+
+
+---
+
+
+---
+
+
+---
+
+
+---
+
+
+
+| Nombre   |      Carnet      |  
+|----------|:-------------:|
+| Alvaro Emmanuel Socop Pérez | 202000194 | 
+
+
+---
+
+---
+
+---
+
+
+---
+
+
+---
+
+
+---
+
+
+
+
+---
+
+
+---
+
+
+---
+
+
+---
+
+
+---
+
+# <a name="nothing"></a>MANUAL TECNICO
+Programa desarrollado en Assembler que permite siendo su representación en consola el cual tiene 2 jugadores y tratan de
+ganar en batalla de barcos ingresados, todos los reportes y estados en una página web; por último se tendrá toda la funcionalidad 
+exclusivamente en consola.
+
+
+>“El manual técnico es el que proporciona todas las pautas de configuración y la lógica con la que se ha desarrollado en el programa, con el objetivo de que cualquier programador entienda la idea propia y su estructura; por lo que se considera necesario ser documentada.”
+## <a name="intro" ></a>ÍNDICE
+
+| Topico | Link |
+| ------ | ------ |
+| Introducción | [Ir](#intro) |
+| Objetivos y alcances del sistema | [Ir](#ob) |
+| Especificaciones Técnicas | [Ir](#specs) |
+| Requisitos de Hardware | [Ir](#req) |
+| Requisitos de software | [Ir](#req2) |
+| Sistema operativo | [Ir](#sisop) |
+| Lenguaje de Programación e IDE | [Ir](#lengprog) |
+| Tecnologías utilizadas (Lógica del programa) | [Ir](#tech) |
+| Funciones utilizadas   | [Ir](#func) |
+| Flujo del programa | [Ir](#flujo) |
+| Conclusiones | [Ir](#Conclu) |
+
+## <a name="intro" ></a>INTRODUCCIÓN
+El presente manual técnico tiene como finalidad describir la estructura y diseño del programa analizador de escritorio de un archivo lfp, así como dar explicación de los métodos, clases y procesos de cada apartado del programa y la modificación que se le podría dar para cualquier finalidad como el de mejorar el sistema o cambiar algunos atributos propios del analizador. El sistema cuenta con implementación de varias librerías propias de python como re, ios, pathlab, entre otros, como parte del conocimiento adquirido en los laboratorios de programación de computadoras en base a ello trataré de explicar en que métodos se fueron utilizando y como hacen funcionar el programa en los distintos sistemas operativos.
+La implementación de librerías externas a python también fueron una opción para poder pedir y abrir ventanas para elegir los archivos necesarios, también se explicará paso a paso cual es el camino para entender perfectamente la arquitectura del programa. Resulta ser bastante fácil de implementar los ciclos y condiciones, también los métodos de interfaces gráficas puesto que es una función que viene integrada con la paquetería por defecto de Tkinter de python y así solo instanciarlos importando las librerías y utilizarlas.  
+
+## <a name="ob"></a>Objetivos y alcances del sistema
+
+### Objetivo General
+- Que el estudiante aplique los conocimientos adquiridos en el curso sobre el lenguaje ensamblador
+
+### Objetivos Específicos
+- Aplicar el conocimiento de operaciones básicas a nivel ensamblador.
+- Conocer el funcionamiento de las interrupciones.
+- Comprender el uso de la memoria en los programas escritos en ensamblador.
+- Aplicar el manejo de archivos a bajo nivel.
+- Comprender el uso de registros bandera.
+
+
+## <a name="specs"></a>Especificaciones Técnicas
+
+
+### <a name="req"></a>Requisitos de Hardware
+|  |  |
+| ------ | ------ |
+|Memoria mínima|	512 MB|
+|Memoria recomendada |	1 GB|
+|Espacio en disco mínimo|	250 MB de espacio libre  |
+|Espacio en disco recomendado	|  500 MB de espacio libre|
+|MVP	|Visual Studio Code y MASM instalados |
+
+### <a name="req2"></a>Requisitos de software
+## <a name="sisop"></a>Sistema operativo 
+Windows
+•	Windows 10 (8u51 y superiors)
+•	Tener instalado el programa de Proteus y Librerias de Arduino Code u otro editor
+•	RAM: 128 MB
+•	Espacio en disco: 124 MB 
+•	Procesador: Mínimo Pentium 2 a 266 MHz 
+•	Algún explorador de internet
+Mac OS X 
+•	Tener instalado el programa Proteus Code u otro editor
+•	Explorador de 64 bits 
+•	Se requiere un explorador de 64 bits (Safari, Firefox, por ejemplo) para ejecutar Oracle Java en Mac OS X.
+Linux
+•	Oracle Linux 5.5+1 
+•	Oracle Linux 6.x (32 bits), 6.x (64 bits)2 
+•	Exploradores: Firefox
+•	Arduino
+•	Proteus
+
+## <a name="lengprog"></a>Lenguaje de Programación e IDE
+Para el desarrollo del programa se utilizó el lenguaje de Programación C y el IDE Arduino y Visual Studio Code para el desarrollo de interfaz se utilizo Proteus 8.10
+
+## <a name="tech"></a>Tecnologías utilizadas (Lógica del programa)
+- Assembler es tipo de programa informático que se encarga de traducir un fichero fuente escrito en un lenguaje ensamblador, a un fichero objeto que contiene código máquina, ejecutable directamente por el microprocesador.
+
+- MASM es El Microsoft Macro Assembler (MASM) es un ensamblador para la familia x86 de microprocesadores. Fue producido originalmente por Microsoft para el trabajo de desarrollo en su sistema operativo MS-DOS, y fue durante cierto tiempo el ensamblador más popular disponible para ese sistema operativo. 
+
+## <a name="func"></a>Funciones utilizadas 
+
+![Imagen](1.png)
+![Imagen](2.png)
+![Imagen](3.png)
+![Imagen](4.png)
+![Imagen](5.png)
+![Imagen](6.png)
+![Imagen](7.png)
+![Imagen](8.png)
+
+## <a name="flujo"></a>Flujo del programa
+Tengo pantalla de bienvenida 
+
+Luego muestro la pantalla de obtener las coordenadas de ambos jugadores
+
+
+
+## <a name="Conclu"></a>Conclusiones
+
+
+- Como conclusión podemos decir que el lenguaje ensamblador es mas que un tipo de lenguaje de bajo nivel en el cual es empleado para crear programas informáticos.
+
+- •La importancia de este es que en el se pueden hacer cualquier tipo de programas que en otros lenguajes de alto nivel no, al igual que ocupan menos espacio en la memoria.
+
+- Este lenguaje es creado a base de instrucciones para intentar sustituir al lenguaje maquina por uno similar utilizado por el hombre.
+
+## <a name="Conclu"></a>Apéndice
 
 ;todo     █░█░█ █▀▀ █░░ █▀▀ █▀█ █▀▄▀█ █▀▀   █▀▄▀█ █▄█   █▀▀ ▄▀█ █▀▄▀█ █▀▀
 ;todo     ▀▄▀▄▀ ██▄ █▄▄ █▄▄ █▄█ █░▀░█ ██▄   █░▀░█ ░█░   █▄█ █▀█ █░▀░█ ██▄
