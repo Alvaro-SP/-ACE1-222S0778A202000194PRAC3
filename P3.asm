@@ -181,7 +181,6 @@ TXTLLENOHTM     db "<td style="background-color: rgb(7, 48, 255);"></td>$'
 TXT_X_HTM     db "<td>X</td>", "$"
 TXT_O_HTM     db "<td>O</td>", "$"
 TRHTM           DB '<tr>$'
-TRHTM           DB '<tr>$'
 TXTLABELTITULOJUGADOR           DB "<h2>  <a href="https://github.com/Alvaro-SP" target="_blank">DISPAROS JUGADOR</a></h2><table class="container"><tbody>,"$"
 TXTLABELTITULOBARCOS            DB "</table><h2>  <a href="https://github.com/Alvaro-SP" target="_blank">BARCOS JUGADOR</a></h2><table class="container"><tbody>"
 FINHTM                          DB '</table><script  src="./script.js"></script></body></html>$'
