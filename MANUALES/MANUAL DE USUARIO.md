@@ -133,22 +133,20 @@ El juego de acorazado es el clásico juego de combate naval que reúne la compet
 ### <a name="sis"></a>Requisitos de software
 ## <a name="sis"></a>Sistema operativo 
 Windows
-•	Windows 10 (8u51 y superiors)
-•	Tener instalado el programa de Proteus y Librerias de Arduino Code u otro editor
-•	RAM: 128 MB
-•	Espacio en disco: 124 MB 
-•	Procesador: Mínimo Pentium 2 a 266 MHz 
-•	Algún explorador de internet
-Mac OS X 
-•	Tener instalado el programa Visual Studio Code y DOSBOX con MASM
-•	Explorador de 64 bits 
-•	Se requiere un explorador de 64 bits (Safari, Firefox, por ejemplo) para ejecutar Oracle Java en Mac OS X.
-Linux
-•	Oracle Linux 5.5+1 
-•	Oracle Linux 6.x (32 bits), 6.x (64 bits)2 
-•	Exploradores: Firefox
-•	Arduino
-•	Proteus
+-	Windows 10 (8u51 y superiors)
+-	Tener instalado el programa de Proteus y Librerias de Arduino Code u otro editor
+-	RAM: 128 MB
+-	Espacio en disco: 124 MB 
+-	Procesador: Mínimo Pentium 2 a 266 MHz 
+-	Algún explorador de internet Mac OS X 
+-	Tener instalado el programa Visual Studio Code y DOSBOX con MASM
+-	Explorador de 64 bits 
+-	Se requiere un explorador de 64 bits (Safari, Firefox, por ejemplo) para ejecutar Oracle Java en Mac OS X. Linux
+-	Oracle Linux 5.5+1 
+-	Oracle Linux 6.x (32 bits), 6.x (64 bits)2 
+-	Exploradores: Firefox
+-	Arduino
+-	Proteus
 
 
 
